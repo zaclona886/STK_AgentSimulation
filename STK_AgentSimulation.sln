@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STK_AgentSimulation", "STK_AgentSimulation\STK_AgentSimulation.csproj", "{CF0B972B-A837-45EA-9D6C-CDE63D2ECD34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STK_AgentSimulation", "STK_AgentSimulation\STK_AgentSimulation.csproj", "{CF0B972B-A837-45EA-9D6C-CDE63D2ECD34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormSP2", "WinFormSP2\WinFormSP2.csproj", "{0203F590-C5C2-4718-958B-93F5116454D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{CF0B972B-A837-45EA-9D6C-CDE63D2ECD34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF0B972B-A837-45EA-9D6C-CDE63D2ECD34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF0B972B-A837-45EA-9D6C-CDE63D2ECD34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0203F590-C5C2-4718-958B-93F5116454D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0203F590-C5C2-4718-958B-93F5116454D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0203F590-C5C2-4718-958B-93F5116454D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0203F590-C5C2-4718-958B-93F5116454D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -36,6 +36,7 @@ namespace STK_AgentSimulation.managers
 		//meta! sender="AgentModel", id="11", type="Notice"
 		public void ProcessVehicleLeave(MessageForm message)
         {
+            _ = "ahoj";
         }
 
 		//meta! sender="VehicleArriveScheduler", id="27", type="Finish"

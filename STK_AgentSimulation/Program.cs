@@ -8,12 +8,10 @@ namespace STK_AgentSimulation
         {
             Console.WriteLine("Simulating...");
 
-
-            new MySimulation().Simulate(Config.numberOfReplications, Config.simulationTime);
+            var sim = new MySimulation();
+            sim.Simulate(Config.numberOfReplications, Config.simulationTime);
 
             Console.WriteLine("Finished...");
-
-            Console.ReadKey();
         }
     }
 }

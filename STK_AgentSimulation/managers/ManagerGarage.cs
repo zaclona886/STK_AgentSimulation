@@ -30,9 +30,20 @@ namespace STK_AgentSimulation.managers
             }
 
             workers2 = new List<STKWorker>();
-            for (int i = 0; i < Config.numberOfWorkers2; i++)
+            for (int i = 0; i < Config.numberOfWorkers2AllVehicles; i++)
             {
-                workers2.Add(new STKWorker());
+                var newWorker = new STKWorker();
+                newWorker.certificate = CertificateType.AllVehicles;
+                workers2.Add(newWorker);
+            }
+            if (Config.advancedSimulation)
+            {
+                for (int i = 0; i < Config.numberOfWorkers2VanCar; i++)
+                {
+                    var newWorker = new STKWorker();
+                    newWorker.certificate = CertificateType.VanCar;
+                    workers2.Add(newWorker);
+                }
             }
             vehiclesParkingInFrontOfControlQueue = new Queue<MyMessage>();
             controllingVehicles = new Dictionary<int, STKVehicle>();
@@ -44,6 +55,8 @@ namespace STK_AgentSimulation.managers
 		public void ProcessVehicleControl(MessageForm message)
         {
             vehiclesParkingInFrontOfControlQueue.Enqueue(message as MyMessage);
+
+            TryToScheduleBreak();
             TryToServeParkedVehicles();
         }
 
@@ -85,12 +98,11 @@ namespace STK_AgentSimulation.managers
             message.Code = Mc.VehicleControl;
             Response(message);
 
-            ((MyMessage)message)._worker.isBusy = false;
-            ((MyMessage)message)._worker.jobType = null;
-            ((MyMessage)message)._worker.vehicle = null;
-            ((MyMessage)message)._worker = null;
+            SetWorkerJobDone(((MyMessage)message));
             controllingVehicles.Remove(((MyMessage)message)._vehicle.id);
+            
 
+            TryToScheduleBreak();
             TryToServeParkedVehicles();
         }
 
@@ -115,13 +127,14 @@ namespace STK_AgentSimulation.managers
                 if (data.isBusy) countBusy++;
             }
 
-            ((MyMessage)message).freeWorkers2 = Config.numberOfWorkers2 - countBusy;
+            ((MyMessage)message).freeWorkers2 = workers2.Count - countBusy;
             Response(message);
         }
 
-		//meta! sender="WorkerBreakProcess", id="47", type="Finish"
-		public void ProcessFinishWorkerBreakProcess(MessageForm message)
+		//meta! sender="Worker2BreakProcess", id="47", type="Finish"
+		public void ProcessFinishWorker2BreakProcess(MessageForm message)
 		{
+            ((MyMessage)message)._worker.breakDoneAt = MySim.CurrentTime;
             SetWorkerJobDone(((MyMessage)message));
         }
 
@@ -143,7 +156,7 @@ namespace STK_AgentSimulation.managers
                         data.jobType = JobType.Break;
                         MyMessage message = new MyMessage(MySim);
                         message._worker = data;
-                        message.Addressee = MyAgent.FindAssistant(SimId.WorkerBreakProcess);
+                        message.Addressee = MyAgent.FindAssistant(SimId.Worker2BreakProcess);
                         StartContinualAssistant(message);
                     }
                 }
@@ -157,8 +170,8 @@ namespace STK_AgentSimulation.managers
             message._worker = null;
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init()
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
 		{
 		}
 
@@ -173,8 +186,8 @@ namespace STK_AgentSimulation.managers
 			case Mc.Finish:
 				switch (message.Sender.Id)
 				{
-				case SimId.WorkerBreakProcess:
-					ProcessFinishWorkerBreakProcess(message);
+				case SimId.Worker2BreakProcess:
+					ProcessFinishWorker2BreakProcess(message);
 				break;
 
 				case SimId.VehicleControlProcess:

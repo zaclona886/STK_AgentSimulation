@@ -5,9 +5,9 @@ using STK_AgentSimulation.agents;
 namespace STK_AgentSimulation.continualAssistants
 {
     //meta! id="43"
-    public class WorkerBreakProcess : Process
+    public class Worker1BreakProcess : Process
     {
-        public WorkerBreakProcess(int id, Simulation mySim, CommonAgent myAgent) :
+        public Worker1BreakProcess(int id, Simulation mySim, CommonAgent myAgent) :
             base(id, mySim, myAgent)
         {
             MyAgent.AddOwnMessage(Mc.WorkerBreakEnd);
@@ -19,8 +19,8 @@ namespace STK_AgentSimulation.continualAssistants
             // Setup component for the next replication
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message)
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message)
         {
             switch (message.Code)
             {
@@ -30,28 +30,28 @@ namespace STK_AgentSimulation.continualAssistants
             }
         }
 
-        //meta! sender="AgentGarage", id="47", type="Start"
-        public void ProcessStart(MessageForm message)
-        {
+		//meta! sender="AgentOffice", id="44", type="Start"
+		public void ProcessStart(MessageForm message)
+		{
             ((MyMessage)message).Code = Mc.WorkerBreakEnd;
             Hold(Config.breakDuration, message);
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        override public void ProcessMessage(MessageForm message)
-        {
-            switch (message.Code)
-            {
-                case Mc.Start:
-                    ProcessStart(message);
-                    break;
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.Start:
+				ProcessStart(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentOffice MyAgent
         {
             get

@@ -56,7 +56,7 @@ namespace STK_AgentSimulation.continualAssistants
                         ((MyMessage)copy)._vehicle = CreateVehicle();
                         Hold(time, copy);                      
                         AssistantFinished(message);
-                    }
+                    } 
                     break;
             }
         }

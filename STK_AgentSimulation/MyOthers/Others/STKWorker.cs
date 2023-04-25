@@ -13,6 +13,6 @@ namespace STK_AgentSimulation.MyOthers.Others
         public STKVehicle? vehicle;
 
         public double breakDoneAt;
-        public int certificate;
+        public CertificateType certificate;
     }
 }

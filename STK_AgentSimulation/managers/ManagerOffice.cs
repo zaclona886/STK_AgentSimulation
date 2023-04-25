@@ -37,7 +37,9 @@ namespace STK_AgentSimulation.managers
             workers1 = new List<STKWorker>();
             for (int i = 0; i < Config.numberOfWorkers1; i++)
             {
-                workers1.Add(new STKWorker());
+                var newWorker = new STKWorker();
+                newWorker.certificate = CertificateType.Basic;
+                workers1.Add(newWorker);
             }
             vehicleArrivalQueue = new Queue<MyMessage>();
             vehiclePaymentQueue = new Queue<MyMessage>();
@@ -123,6 +125,7 @@ namespace STK_AgentSimulation.managers
 		//meta! sender="AgentSTK", id="33", type="Response"
 		public void ProcessCheckSpace(MessageForm message)
         {
+            TryToScheduleBreak();
             TryToServePaymentQueue();
             if ((((MyMessage)message).freeParkingSlots + ((MyMessage)message).freeWorkers2) > takenVehicles.Count)
             {
@@ -187,9 +190,10 @@ namespace STK_AgentSimulation.managers
             message._worker = null;
         }
 
-		//meta! sender="WorkerBreakProcess", id="44", type="Finish"
-		public void ProcessFinishWorkerBreakProcess(MessageForm message)
+		//meta! sender="Worker1BreakProcess", id="44", type="Finish"
+		public void ProcessFinishWorker1BreakProcess(MessageForm message)
 		{
+            ((MyMessage)message)._worker.breakDoneAt = MySim.CurrentTime;
             SetWorkerJobDone(((MyMessage)message));
         }
 
@@ -212,15 +216,15 @@ namespace STK_AgentSimulation.managers
                         data.jobType = JobType.Break;
                         MyMessage message = new MyMessage(MySim);
                         message._worker = data;
-                        message.Addressee = MyAgent.FindAssistant(SimId.WorkerBreakProcess);
+                        message.Addressee = MyAgent.FindAssistant(SimId.Worker1BreakProcess);
                         StartContinualAssistant(message);
                     }
                 }
             }
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init()
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
 		{
 		}
 
@@ -239,8 +243,8 @@ namespace STK_AgentSimulation.managers
 					ProcessFinishVehiclePaymentProcess(message);
 				break;
 
-				case SimId.WorkerBreakProcess:
-					ProcessFinishWorkerBreakProcess(message);
+				case SimId.Worker1BreakProcess:
+					ProcessFinishWorker1BreakProcess(message);
 				break;
 
 				case SimId.VehicleCheckProcess:
