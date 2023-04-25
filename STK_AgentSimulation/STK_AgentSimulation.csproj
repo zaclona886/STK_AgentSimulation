@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="ABACore">
+      <HintPath>..\..\..\TESTING\TestNovinovyStanok\Newsstand\TestNewsstand\ABACore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

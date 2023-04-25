@@ -1,10 +1,19 @@
-﻿namespace STK_AgentSimulation
+﻿using STK_AgentSimulation.simulation;
+
+namespace STK_AgentSimulation
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Simulating...");
+
+
+            new MySimulation().Simulate(Config.numberOfReplications, Config.simulationTime);
+
+            Console.WriteLine("Finished...");
+
+            Console.ReadKey();
         }
     }
 }
