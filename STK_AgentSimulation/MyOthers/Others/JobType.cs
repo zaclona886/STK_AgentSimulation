@@ -10,6 +10,7 @@ namespace STK_AgentSimulation.MyOthers.Others
     {
         Checking,
         Paying,
-        Controlling
+        Controlling,
+        Break
     }
 }

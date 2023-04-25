@@ -10,6 +10,8 @@ namespace STK_AgentSimulation.MyOthers.Others
     {
         public bool isBusy;
         public JobType? jobType;
+        public int certificate;
         public STKVehicle? vehicle;
+        public bool breakDone;
     }
 }

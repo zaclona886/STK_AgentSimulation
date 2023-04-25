@@ -55,6 +55,7 @@ namespace STK_AgentSimulation.managers
                     MessageForm message = vehiclesParkingInFrontOfControlQueue.Dequeue();
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Controlling;
+                    freeWorker.vehicle = ((MyMessage)message)._vehicle;
                     ((MyMessage)message)._workerk2 = freeWorker;
                     controllingVehicles.Add(((MyMessage)message)._vehicle.id, ((MyMessage)message)._vehicle);
                     message.Addressee = MyAgent.FindAssistant(SimId.VehicleControlProcess);
@@ -84,6 +85,7 @@ namespace STK_AgentSimulation.managers
 
             ((MyMessage)message)._workerk2.isBusy = false;
             ((MyMessage)message)._workerk2.jobType = null;
+            ((MyMessage)message)._workerk2.vehicle = null;
             ((MyMessage)message)._workerk2 = null;
             controllingVehicles.Remove(((MyMessage)message)._vehicle.id);
 
