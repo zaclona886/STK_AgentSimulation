@@ -58,7 +58,7 @@ namespace STK_AgentSimulation.continualAssistants
             {
                 case Mc.NewVehicle:
                     double time = expoDistCarsArrival.getNextValue();
-                    if ((MySim.CurrentTime + time) < Config.stopOfArriving) 
+                    if ((MySim.CurrentTime + time) < Config.stopOfArrivingVehicles) 
                     {
                         MessageForm copy = message.CreateCopy();
                         ((MyMessage)copy)._vehicle = CreateVehicle();
