@@ -43,16 +43,8 @@ namespace STK_AgentSimulation.continualAssistants
             throw new ArgumentException("Fatal error in choosing vehicle type!");
         }
 
-        //meta! sender="AgentOffice", id="16", type="Start"
-        public void ProcessStart(MessageForm message)
-        {
-            ((MyMessage)message).Code = Mc.NewVehicle;
-            ((MyMessage)message)._vehicle = CreateVehicle();
-            Hold(expoDistCarsArrival.getNextValue(), message);
-        }
-
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message)
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message)
         {
             switch (message.Code)
             {
@@ -62,30 +54,36 @@ namespace STK_AgentSimulation.continualAssistants
                     {
                         MessageForm copy = message.CreateCopy();
                         ((MyMessage)copy)._vehicle = CreateVehicle();
-                        Hold(time, copy);
-                        
-                        message.Addressee = MyAgent;
+                        Hold(time, copy);                      
                         AssistantFinished(message);
                     }
                     break;
             }
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        override public void ProcessMessage(MessageForm message)
-        {
-            switch (message.Code)
-            {
-                case Mc.Start:
-                    ProcessStart(message);
-                    break;
-
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
+		//meta! sender="AgentEnvironment", id="27", type="Start"
+		public void ProcessStart(MessageForm message)
+		{
+            ((MyMessage)message).Code = Mc.NewVehicle;
+            ((MyMessage)message)._vehicle = CreateVehicle();
+            Hold(expoDistCarsArrival.getNextValue(), message);
         }
-        //meta! tag="end"
+
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.Start:
+				ProcessStart(message);
+			break;
+
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentEnvironment MyAgent
         {
             get

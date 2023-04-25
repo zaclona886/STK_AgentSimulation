@@ -25,7 +25,9 @@ namespace STK_AgentSimulation.agents
 		{
 			new ManagerGarage(SimId.ManagerGarage, MySim, this);
 			new VehicleControlProcess(SimId.VehicleControlProcess, MySim, this);
+			new WorkerBreakProcess(SimId.WorkerBreakProcess, MySim, this);
 			AddOwnMessage(Mc.VehicleControl);
+			AddOwnMessage(Mc.WorkerBreak);
 			AddOwnMessage(Mc.CheckSpace);
 		}
 		//meta! tag="end"

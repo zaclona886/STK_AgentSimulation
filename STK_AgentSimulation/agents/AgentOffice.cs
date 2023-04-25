@@ -24,9 +24,11 @@ namespace STK_AgentSimulation.agents
 		private void Init()
 		{
 			new ManagerOffice(SimId.ManagerOffice, MySim, this);
+			new WorkerBreakProcess(SimId.WorkerBreakProcess, MySim, this);
 			new VehicleCheckProcess(SimId.VehicleCheckProcess, MySim, this);
 			new VehiclePaymentProcess(SimId.VehiclePaymentProcess, MySim, this);
 			AddOwnMessage(Mc.VehicleControl);
+			AddOwnMessage(Mc.WorkerBreak);
 			AddOwnMessage(Mc.VehicleService);
 			AddOwnMessage(Mc.CheckSpace);
 		}

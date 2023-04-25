@@ -17,7 +17,10 @@ namespace STK_AgentSimulation.simulation
 		public const int ManagerGarage = 106;
 		public const int VehiclePaymentProcess = 1002;
 		public const int VehicleControlProcess = 1003;
+		public const int WorkersBreakScheduler = 1005;
 		public const int VehicleArriveScheduler = 1004;
+		public const int WorkerBreakProcess = 1006;
+		public const int WorkerBreakProcess = 1007;
 		public const int VehicleCheckProcess = 1001;
 		//meta! tag="end"
     }

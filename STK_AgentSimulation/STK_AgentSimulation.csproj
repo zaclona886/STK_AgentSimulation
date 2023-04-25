@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="simulation\Config.cs~RF55e9639.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="ABACore">
       <HintPath>..\..\..\TESTING\TestNovinovyStanok\Newsstand\TestNewsstand\ABACore.dll</HintPath>
     </Reference>

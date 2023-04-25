@@ -18,6 +18,7 @@ namespace STK_AgentSimulation.simulation
         public const int numberOfParkingSlots = 1;
 
         public static bool advancedSimulation = false;
-        public static double startOfPlanningBreaks = 120 * 60;
+        public const double startOfPlanningBreaks = 120 * 60;
+        public const double breakDuration = 30 * 60;
     }
 }

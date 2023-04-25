@@ -79,6 +79,18 @@ namespace STK_AgentSimulation.managers
             Request(message);
         }
 
+		//meta! sender="WorkersBreakScheduler", id="42", type="Finish"
+		public void ProcessFinish(MessageForm message)
+		{
+            message.Addressee = MySim.FindAgent(SimId.AgentOffice);
+            message.Code = Mc.WorkerBreak;
+            Notice(new MyMessage((MyMessage)message));
+
+			message.Addressee = MySim.FindAgent(SimId.AgentGarage);
+            message.Code = Mc.WorkerBreak;
+            Notice(new MyMessage((MyMessage)message));
+        }
+
 		//meta! userInfo="Generated code: do not modify", tag="begin"
 		public void Init()
 		{
@@ -125,6 +137,10 @@ namespace STK_AgentSimulation.managers
 					ProcessVehicleControlAgentGarage(message);
 				break;
 				}
+			break;
+
+			case Mc.Finish:
+				ProcessFinish(message);
 			break;
 
 			default:

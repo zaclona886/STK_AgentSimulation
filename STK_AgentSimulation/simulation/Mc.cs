@@ -9,6 +9,7 @@ namespace STK_AgentSimulation.simulation
 		public const int VehicleLeave = 1001;
 		public const int VehicleArrive = 1002;
 		public const int VehicleService = 1003;
+		public const int WorkerBreak = 1010;
 		public const int VehicleControl = 1006;
 		//meta! tag="end"
 
@@ -17,6 +18,7 @@ namespace STK_AgentSimulation.simulation
         public const int CheckEnd = 2;
         public const int ControlEnd = 3;
         public const int PaymentEnd = 4;
+        public const int WorkerBreakEnd = 5;
 
     }
 }

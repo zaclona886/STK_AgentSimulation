@@ -25,50 +25,50 @@ namespace STK_AgentSimulation.managers
             }
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message)
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message)
         {
             switch (message.Code)
             {
             }
         }
 
-        //meta! sender="AgentModel", id="11", type="Notice"
-        public void ProcessVehicleLeave(MessageForm message)
+		//meta! sender="AgentModel", id="11", type="Notice"
+		public void ProcessVehicleLeave(MessageForm message)
         {
         }
 
-        //meta! sender="VehicleArriveScheduler", id="27", type="Finish"
-        public void ProcessFinish(MessageForm message)
+		//meta! sender="VehicleArriveScheduler", id="27", type="Finish"
+		public void ProcessFinish(MessageForm message)
         {
             message.Addressee = MySim.FindAgent(SimId.AgentModel);
             message.Code = Mc.VehicleArrive;
             Notice(new MyMessage((MyMessage)message));
         }
 
-        //meta! userInfo="Generated code: do not modify", tag="begin"
-        public void Init()
-        {
-        }
+		//meta! userInfo="Generated code: do not modify", tag="begin"
+		public void Init()
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message)
-        {
-            switch (message.Code)
-            {
-                case Mc.VehicleLeave:
-                    ProcessVehicleLeave(message);
-                    break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.VehicleLeave:
+				ProcessVehicleLeave(message);
+			break;
 
-                case Mc.Finish:
-                    ProcessFinish(message);
-                    break;
+			case Mc.Finish:
+				ProcessFinish(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentEnvironment MyAgent
         {
             get

@@ -16,6 +16,8 @@ namespace STK_AgentSimulation.managers
         public Queue<MyMessage> vehicleArrivalQueue { get; set; }
         public Queue<MyMessage> vehiclePaymentQueue { get; set; }
 
+        public bool breakTime { get; set; }
+
         public ManagerOffice(int id, Simulation mySim, Agent myAgent) :
             base(id, mySim, myAgent)
         {
@@ -32,7 +34,6 @@ namespace STK_AgentSimulation.managers
                 PetriNet.Clear();
             }
 
-
             workers1 = new List<STKWorker>();
             for (int i = 0; i < Config.numberOfWorkers1; i++)
             {
@@ -42,11 +43,13 @@ namespace STK_AgentSimulation.managers
             vehiclePaymentQueue = new Queue<MyMessage>();
             takenVehicles = new Dictionary<int, STKVehicle>();
             payingVehicles = new Dictionary<int, STKVehicle>();
+
+            breakTime = false;
         }
 
 
-        //meta! sender="AgentSTK", id="20", type="Request"
-        public void ProcessVehicleService(MessageForm message)
+		//meta! sender="AgentSTK", id="20", type="Request"
+		public void ProcessVehicleService(MessageForm message)
         {
             ((MyMessage)message)._vehicle.arrivalTime = MySim.CurrentTime;
             vehicleArrivalQueue.Enqueue(message as MyMessage);
@@ -56,8 +59,8 @@ namespace STK_AgentSimulation.managers
             Request(message);
         }
 
-        //meta! sender="VehicleCheckProcess", id="16", type="Finish"
-        public void ProcessFinishVehicleCheckProcess(MessageForm message)
+		//meta! sender="VehicleCheckProcess", id="16", type="Finish"
+		public void ProcessFinishVehicleCheckProcess(MessageForm message)
         {
             // Control of Vehicle in Garage
             message.Code = Mc.VehicleControl;
@@ -76,8 +79,8 @@ namespace STK_AgentSimulation.managers
             }
         }        
 
-        //meta! sender="VehiclePaymentProcess", id="18", type="Finish"
-        public void ProcessFinishVehiclePaymentProcess(MessageForm message)
+		//meta! sender="VehiclePaymentProcess", id="18", type="Finish"
+		public void ProcessFinishVehiclePaymentProcess(MessageForm message)
         {
             message.Code = Mc.VehicleService;
             message.Addressee = MySim.FindAgent(SimId.AgentSTK);
@@ -95,8 +98,8 @@ namespace STK_AgentSimulation.managers
             }
         }
 
-        //meta! sender="AgentSTK", id="30", type="Response"
-        public void ProcessVehicleControl(MessageForm message)
+		//meta! sender="AgentSTK", id="30", type="Response"
+		public void ProcessVehicleControl(MessageForm message)
         {
             vehiclePaymentQueue.Enqueue(message as MyMessage);
 
@@ -109,16 +112,16 @@ namespace STK_AgentSimulation.managers
             }
         }
 
-        //meta! userInfo="Process messages defined in code", id="0"
-        public void ProcessDefault(MessageForm message)
+		//meta! userInfo="Process messages defined in code", id="0"
+		public void ProcessDefault(MessageForm message)
         {
             switch (message.Code)
             {
             }
         }
 
-        //meta! sender="AgentSTK", id="33", type="Response"
-        public void ProcessCheckSpace(MessageForm message)
+		//meta! sender="AgentSTK", id="33", type="Response"
+		public void ProcessCheckSpace(MessageForm message)
         {
             TryToServePaymentQueue();
             if ((((MyMessage)message).freeParkingSlots + ((MyMessage)message).freeWorkers2) > takenVehicles.Count)
@@ -137,7 +140,7 @@ namespace STK_AgentSimulation.managers
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Paying;
                     freeWorker.vehicle = ((MyMessage)message)._vehicle;
-                    ((MyMessage)message)._workerk1 = freeWorker;
+                    ((MyMessage)message)._worker = freeWorker;
                     payingVehicles.Add(((MyMessage)message)._vehicle.id, ((MyMessage)message)._vehicle);
                     message.Addressee = MyAgent.FindAssistant(SimId.VehiclePaymentProcess);
                     StartContinualAssistant(message);
@@ -156,7 +159,7 @@ namespace STK_AgentSimulation.managers
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Checking;
                     freeWorker.vehicle = ((MyMessage)message)._vehicle;
-                    ((MyMessage)message)._workerk1 = freeWorker;
+                    ((MyMessage)message)._worker = freeWorker;
                     takenVehicles.Add(((MyMessage)message)._vehicle.id, ((MyMessage)message)._vehicle);
                     message.Addressee = MyAgent.FindAssistant(SimId.VehicleCheckProcess);
                     StartContinualAssistant(message);
@@ -178,52 +181,92 @@ namespace STK_AgentSimulation.managers
 
         private void SetWorkerJobDone(MyMessage? message)
         {
-            message._workerk1.isBusy = false;
-            message._workerk1.jobType = null;
-            message._workerk1.vehicle = null;
-            message._workerk1 = null;
+            message._worker.isBusy = false;
+            message._worker.jobType = null;
+            message._worker.vehicle = null;
+            message._worker = null;
+        }
+
+		//meta! sender="WorkerBreakProcess", id="44", type="Finish"
+		public void ProcessFinishWorkerBreakProcess(MessageForm message)
+		{
+            SetWorkerJobDone(((MyMessage)message));
+        }
+
+		//meta! sender="AgentSTK", id="48", type="Notice"
+		public void ProcessWorkerBreak(MessageForm message)
+		{
+            breakTime = true;
+            TryToScheduleBreak();
+		}
+
+        private void TryToScheduleBreak()
+        {
+            if (breakTime & Config.advancedSimulation)
+            {
+                foreach(STKWorker data in workers1)
+                {
+                    if (!data.isBusy & data.breakDoneAt == 0)
+                    {
+                        data.isBusy = true;
+                        data.jobType = JobType.Break;
+                        MyMessage message = new MyMessage(MySim);
+                        message._worker = data;
+                        message.Addressee = MyAgent.FindAssistant(SimId.WorkerBreakProcess);
+                        StartContinualAssistant(message);
+                    }
+                }
+            }
         }
 
         //meta! userInfo="Generated code: do not modify", tag="begin"
         public void Init()
-        {
-        }
+		{
+		}
 
-        override public void ProcessMessage(MessageForm message)
-        {
-            switch (message.Code)
-            {
-                case Mc.Finish:
-                    switch (message.Sender.Id)
-                    {
-                        case SimId.VehiclePaymentProcess:
-                            ProcessFinishVehiclePaymentProcess(message);
-                            break;
+		override public void ProcessMessage(MessageForm message)
+		{
+			switch (message.Code)
+			{
+			case Mc.CheckSpace:
+				ProcessCheckSpace(message);
+			break;
 
-                        case SimId.VehicleCheckProcess:
-                            ProcessFinishVehicleCheckProcess(message);
-                            break;
-                    }
-                    break;
+			case Mc.Finish:
+				switch (message.Sender.Id)
+				{
+				case SimId.VehiclePaymentProcess:
+					ProcessFinishVehiclePaymentProcess(message);
+				break;
 
-                case Mc.CheckSpace:
-                    ProcessCheckSpace(message);
-                    break;
+				case SimId.WorkerBreakProcess:
+					ProcessFinishWorkerBreakProcess(message);
+				break;
 
-                case Mc.VehicleControl:
-                    ProcessVehicleControl(message);
-                    break;
+				case SimId.VehicleCheckProcess:
+					ProcessFinishVehicleCheckProcess(message);
+				break;
+				}
+			break;
 
-                case Mc.VehicleService:
-                    ProcessVehicleService(message);
-                    break;
+			case Mc.VehicleControl:
+				ProcessVehicleControl(message);
+			break;
 
-                default:
-                    ProcessDefault(message);
-                    break;
-            }
-        }
-        //meta! tag="end"
+			case Mc.WorkerBreak:
+				ProcessWorkerBreak(message);
+			break;
+
+			case Mc.VehicleService:
+				ProcessVehicleService(message);
+			break;
+
+			default:
+				ProcessDefault(message);
+			break;
+			}
+		}
+		//meta! tag="end"
         public new AgentOffice MyAgent
         {
             get

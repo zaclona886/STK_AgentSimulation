@@ -18,12 +18,20 @@ namespace STK_AgentSimulation.agents
         {
             base.PrepareReplication();
             // Setup component for the next replication
+            if (Config.advancedSimulation)
+            {
+                MyMessage message = new MyMessage(MySim);
+                message.Addressee = FindAssistant(SimId.WorkersBreakScheduler);
+                MyManager.StartContinualAssistant(message);
+            }
+            
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
 		private void Init()
 		{
 			new ManagerSTK(SimId.ManagerSTK, MySim, this);
+			new WorkersBreakScheduler(SimId.WorkersBreakScheduler, MySim, this);
 			AddOwnMessage(Mc.VehicleControl);
 			AddOwnMessage(Mc.VehicleService);
 			AddOwnMessage(Mc.CheckSpace);

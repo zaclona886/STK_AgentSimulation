@@ -8,8 +8,7 @@ namespace STK_AgentSimulation.simulation
     {
         public STKVehicle? _vehicle { get; set; }
         public double arrivalTime { get; set; }
-        public STKWorker? _workerk1 { get; set; }
-        public STKWorker? _workerk2 { get; set; }
+        public STKWorker? _worker { get; set; }
 
         public int freeParkingSlots { get; set; }
         public int freeWorkers2 { get; set; }
@@ -37,8 +36,7 @@ namespace STK_AgentSimulation.simulation
             _vehicle = original._vehicle;
             arrivalTime = original.arrivalTime;
 
-            _workerk1 = original._workerk1;
-            _workerk2 = original._workerk2;
+            _worker = original._worker;
 
             freeParkingSlots = original.freeParkingSlots;
             freeWorkers2 = original.freeWorkers2;
