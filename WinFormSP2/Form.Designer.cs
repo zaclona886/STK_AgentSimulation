@@ -227,9 +227,9 @@
             parkingVehiclesLabel.AutoSize = true;
             parkingVehiclesLabel.Location = new Point(488, 18);
             parkingVehiclesLabel.Name = "parkingVehiclesLabel";
-            parkingVehiclesLabel.Size = new Size(179, 15);
+            parkingVehiclesLabel.Size = new Size(130, 15);
             parkingVehiclesLabel.TabIndex = 10;
-            parkingVehiclesLabel.Text = "Parking Vehicles Queue, Max 0/0";
+            parkingVehiclesLabel.Text = "Parking Vehicles Queue";
             // 
             // label4
             // 
@@ -719,7 +719,7 @@
             replicationBox.Name = "replicationBox";
             replicationBox.Size = new Size(84, 23);
             replicationBox.TabIndex = 36;
-            replicationBox.Text = "10000";
+            replicationBox.Text = "1000";
             // 
             // fastModeCheck
             // 

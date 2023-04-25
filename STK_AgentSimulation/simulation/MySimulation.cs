@@ -9,6 +9,8 @@ namespace STK_AgentSimulation.simulation
         //Global Statistics
         public NormalStatistic globalAverageFinishedVehicles { get; set; }
         public NormalStatistic globalAverageLeftVehiclesInSystem { get; set; }
+
+        public NormalStatistic globalAverageCountOfVehiclesInSystem { get; set; }
         public MySimulation()
         {
             Init();
@@ -20,6 +22,7 @@ namespace STK_AgentSimulation.simulation
             // Create global statistcis
             globalAverageFinishedVehicles = new NormalStatistic(this);
             globalAverageLeftVehiclesInSystem = new NormalStatistic(this);
+            globalAverageCountOfVehiclesInSystem = new NormalStatistic(this);
         }
 
         override protected void PrepareReplication()
@@ -34,6 +37,8 @@ namespace STK_AgentSimulation.simulation
             base.ReplicationFinished();
             globalAverageFinishedVehicles.AddValue(AgentOffice.finishedVehicles);
             globalAverageLeftVehiclesInSystem.AddValue(AgentOffice.arrivedVehicles - AgentOffice.finishedVehicles);
+
+            globalAverageCountOfVehiclesInSystem.AddValue(AgentOffice.averageCountOfVehiclesInSystem.GetResult());
         }
 
         override protected void SimulationFinished()

@@ -195,7 +195,7 @@ namespace WinFormSP2
                 localStatView.Items.Clear();
                 //finished replications
                 ListViewItem itemLocStat = new ListViewItem("Finished Replications");
-                itemLocStat.SubItems.Add(_sim.CurrentReplication.ToString());
+                itemLocStat.SubItems.Add((_sim.CurrentReplication + 1).ToString());
                 localStatView.Items.Add(itemLocStat);
 
                 //Simulation Time
@@ -211,15 +211,15 @@ namespace WinFormSP2
                 itemLocStat.SubItems.Add("Vehicle");
                 localStatView.Items.Add(itemLocStat);
 
-                //// Average count of Vehicles in the End xxxxx Not Displaying
-                //itemLocStat = new ListViewItem();
-                //localStatView.Items.Add(itemLocStat);
+                // Average count of Vehicles in the End xxxxx Not Displaying
+                itemLocStat = new ListViewItem();
+                localStatView.Items.Add(itemLocStat);
 
-                //// Average Count of Vehicles in System
-                //itemLocStat = new ListViewItem("Average Count of Vehicles in System");
-                //itemLocStat.SubItems.Add(_sim.averageCountOfVehiclesInSystem.GetResult().ToString("F5"));
-                //itemLocStat.SubItems.Add("Vehicle");
-                //localStatView.Items.Add(itemLocStat);
+                // Average Count of Vehicles in System
+                itemLocStat = new ListViewItem("Average Count of Vehicles in System");
+                itemLocStat.SubItems.Add(_sim.AgentOffice.averageCountOfVehiclesInSystem.GetResult().ToString("F5"));
+                itemLocStat.SubItems.Add("Vehicle");
+                localStatView.Items.Add(itemLocStat);
 
                 //// Average Time of Vehicles in System
                 //itemLocStat = new ListViewItem("Average Time of Vehicles in System");
@@ -315,7 +315,7 @@ namespace WinFormSP2
                 globalStatView.Items.Clear();
                 //finished replications
                 ListViewItem itemLocStat = new ListViewItem("Finished Replications");
-                itemLocStat.SubItems.Add(_sim.CurrentReplication.ToString());
+                itemLocStat.SubItems.Add((_sim.CurrentReplication + 1).ToString());
                 globalStatView.Items.Add(itemLocStat);
 
                 //Simulation Time xxx Not Displaying
@@ -334,16 +334,15 @@ namespace WinFormSP2
                 itemLocStat.SubItems.Add("Vehicle");
                 globalStatView.Items.Add(itemLocStat);
 
-                //// Average Count of Vehicles System
-                //itemLocStat = new ListViewItem("Average Count of Vehicles in System");
-                //itemLocStat.SubItems.Add(sim.globalAverageCountOfVehiclesInSystem.GetResult().ToString("F5"));
-                //itemLocStat.SubItems.Add("Vehicle");
-                //var listCI = sim.globalAverageCountOfVehiclesInSystem.getConfidenceInterval(95);
-                //itemLocStat.SubItems.Add("95%");
-                //itemLocStat.SubItems.Add("< " + (listCI[0]).ToString("F5"));
-                //itemLocStat.SubItems.Add((listCI[1]).ToString("F5") + " >");
-
-                //globalStatView.Items.Add(itemLocStat);
+                // Average Count of Vehicles System
+                itemLocStat = new ListViewItem("Average Count of Vehicles in System");
+                itemLocStat.SubItems.Add(_sim.globalAverageCountOfVehiclesInSystem.GetResult().ToString("F5"));
+                itemLocStat.SubItems.Add("Vehicle");
+                var listCI = _sim.globalAverageCountOfVehiclesInSystem.getConfidenceInterval(95);
+                itemLocStat.SubItems.Add("95%");
+                itemLocStat.SubItems.Add("< " + (listCI[0]).ToString("F5"));
+                itemLocStat.SubItems.Add((listCI[1]).ToString("F5") + " >");
+                globalStatView.Items.Add(itemLocStat);
 
                 //// Average Time of Vehicles in System
                 //itemLocStat = new ListViewItem("Average Time of Vehicles in System");

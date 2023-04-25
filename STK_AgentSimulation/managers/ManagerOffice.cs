@@ -54,6 +54,8 @@ namespace STK_AgentSimulation.managers
         public void ProcessVehicleService(MessageForm message)
         {
             MyAgent.arrivedVehicles++;
+            MyAgent.averageCountOfVehiclesInSystem.AddValue(MyAgent.arrivedVehicles - MyAgent.finishedVehicles);
+
             ((MyMessage)message)._vehicle.arrivalTime = MySim.CurrentTime;
             vehicleArrivalQueue.Enqueue(message as MyMessage);
 
@@ -86,6 +88,9 @@ namespace STK_AgentSimulation.managers
         public void ProcessFinishVehiclePaymentProcess(MessageForm message)
         {
             MyAgent.finishedVehicles++;
+            MyAgent.averageCountOfVehiclesInSystem.AddValue(MyAgent.arrivedVehicles - MyAgent.finishedVehicles);
+
+
             message.Code = Mc.VehicleService;
             message.Addressee = MySim.FindAgent(SimId.AgentSTK);
             Response(message);

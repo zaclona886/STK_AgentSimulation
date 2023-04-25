@@ -2,6 +2,7 @@ using OSPABA;
 using STK_AgentSimulation.simulation;
 using STK_AgentSimulation.managers;
 using STK_AgentSimulation.continualAssistants;
+using STK_AgentSimulation.MyOthers.Statistics;
 
 namespace STK_AgentSimulation.agents
 {
@@ -10,6 +11,7 @@ namespace STK_AgentSimulation.agents
     {
         public int arrivedVehicles { get; set; }
         public int finishedVehicles { get; set; }
+        public WeightStatistic averageCountOfVehiclesInSystem { get; set; }
         public AgentOffice(int id, Simulation mySim, Agent parent) :
             base(id, mySim, parent)
         {
@@ -22,6 +24,7 @@ namespace STK_AgentSimulation.agents
             // Setup component for the next replication
             arrivedVehicles = 0;
             finishedVehicles = 0;
+            averageCountOfVehiclesInSystem = new WeightStatistic(MySim);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
