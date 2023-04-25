@@ -18,5 +18,6 @@ namespace STK_AgentSimulation.simulation
         public const int numberOfParkingSlots = 1;
 
         public static bool advancedSimulation = false;
+        public static double = 
     }
 }
