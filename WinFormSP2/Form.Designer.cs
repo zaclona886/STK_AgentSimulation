@@ -70,6 +70,10 @@
             payingVehiclesLabel = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            workers2CarVanBox = new TextBox();
+            label8 = new Label();
+            advancedSimulationCheck = new CheckBox();
+            label7 = new Label();
             groupBox4 = new GroupBox();
             globalStatView = new ListView();
             columnHeader36 = new ColumnHeader();
@@ -84,19 +88,21 @@
             columnHeader32 = new ColumnHeader();
             Unit = new ColumnHeader();
             statusLabel = new Label();
-            workers2Box = new TextBox();
+            workers2AllBox = new TextBox();
             workers1Box = new TextBox();
             label12 = new Label();
             slowModeGroup = new GroupBox();
-            occuranceTimeBox = new TextBox();
-            sleepTimeBox = new TextBox();
+            label20 = new Label();
+            label19 = new Label();
+            label18 = new Label();
+            label10 = new Label();
             label14 = new Label();
             label13 = new Label();
             occuranceTimeBar = new TrackBar();
             sleepTimeBar = new TrackBar();
             label11 = new Label();
             replicationBox = new TextBox();
-            slowModeCheck = new CheckBox();
+            fastModeCheck = new CheckBox();
             label9 = new Label();
             label3 = new Label();
             stopBut = new Button();
@@ -245,7 +251,7 @@
             // 
             // pauseButton
             // 
-            pauseButton.Location = new Point(6, 64);
+            pauseButton.Location = new Point(6, 35);
             pauseButton.Name = "pauseButton";
             pauseButton.Size = new Size(87, 23);
             pauseButton.TabIndex = 19;
@@ -420,16 +426,20 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(workers2CarVanBox);
+            tabPage1.Controls.Add(label8);
+            tabPage1.Controls.Add(advancedSimulationCheck);
+            tabPage1.Controls.Add(label7);
             tabPage1.Controls.Add(groupBox4);
             tabPage1.Controls.Add(groupBox3);
             tabPage1.Controls.Add(statusLabel);
-            tabPage1.Controls.Add(workers2Box);
+            tabPage1.Controls.Add(workers2AllBox);
             tabPage1.Controls.Add(workers1Box);
             tabPage1.Controls.Add(label12);
             tabPage1.Controls.Add(slowModeGroup);
             tabPage1.Controls.Add(label11);
             tabPage1.Controls.Add(replicationBox);
-            tabPage1.Controls.Add(slowModeCheck);
+            tabPage1.Controls.Add(fastModeCheck);
             tabPage1.Controls.Add(label9);
             tabPage1.Controls.Add(label3);
             tabPage1.Controls.Add(stopBut);
@@ -444,6 +454,41 @@
             tabPage1.TabIndex = 1;
             tabPage1.Text = "Simulation";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // workers2CarVanBox
+            // 
+            workers2CarVanBox.Location = new Point(236, 97);
+            workers2CarVanBox.Name = "workers2CarVanBox";
+            workers2CarVanBox.Size = new Size(84, 23);
+            workers2CarVanBox.TabIndex = 48;
+            workers2CarVanBox.Text = "1";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(99, 100);
+            label8.Name = "label8";
+            label8.Size = new Size(99, 15);
+            label8.TabIndex = 47;
+            label8.Text = "Workers2,CarVan:";
+            // 
+            // advancedSimulationCheck
+            // 
+            advancedSimulationCheck.AutoSize = true;
+            advancedSimulationCheck.Location = new Point(485, 36);
+            advancedSimulationCheck.Name = "advancedSimulationCheck";
+            advancedSimulationCheck.Size = new Size(15, 14);
+            advancedSimulationCheck.TabIndex = 46;
+            advancedSimulationCheck.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(346, 35);
+            label7.Name = "label7";
+            label7.Size = new Size(120, 15);
+            label7.TabIndex = 45;
+            label7.Text = "Advanced Simulation";
             // 
             // groupBox4
             // 
@@ -535,23 +580,23 @@
             // statusLabel
             // 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new Point(6, 100);
+            statusLabel.Location = new Point(6, 120);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(42, 15);
             statusLabel.TabIndex = 42;
             statusLabel.Text = "Status:";
             // 
-            // workers2Box
+            // workers2AllBox
             // 
-            workers2Box.Location = new Point(179, 64);
-            workers2Box.Name = "workers2Box";
-            workers2Box.Size = new Size(84, 23);
-            workers2Box.TabIndex = 41;
-            workers2Box.Text = "1";
+            workers2AllBox.Location = new Point(236, 64);
+            workers2AllBox.Name = "workers2AllBox";
+            workers2AllBox.Size = new Size(84, 23);
+            workers2AllBox.TabIndex = 41;
+            workers2AllBox.Text = "1";
             // 
             // workers1Box
             // 
-            workers1Box.Location = new Point(179, 35);
+            workers1Box.Location = new Point(236, 35);
             workers1Box.Name = "workers1Box";
             workers1Box.Size = new Size(84, 23);
             workers1Box.TabIndex = 40;
@@ -562,42 +607,66 @@
             label12.AutoSize = true;
             label12.Location = new Point(99, 68);
             label12.Name = "label12";
-            label12.Size = new Size(59, 15);
+            label12.Size = new Size(118, 15);
             label12.TabIndex = 39;
-            label12.Text = "Workers2:";
+            label12.Text = "Workers2,AllVehicles:";
             // 
             // slowModeGroup
             // 
-            slowModeGroup.Controls.Add(occuranceTimeBox);
-            slowModeGroup.Controls.Add(sleepTimeBox);
+            slowModeGroup.Controls.Add(label20);
+            slowModeGroup.Controls.Add(label19);
+            slowModeGroup.Controls.Add(label18);
+            slowModeGroup.Controls.Add(label10);
             slowModeGroup.Controls.Add(label14);
             slowModeGroup.Controls.Add(label13);
             slowModeGroup.Controls.Add(occuranceTimeBar);
             slowModeGroup.Controls.Add(sleepTimeBar);
-            slowModeGroup.Location = new Point(385, 6);
+            slowModeGroup.Location = new Point(518, 6);
             slowModeGroup.Name = "slowModeGroup";
             slowModeGroup.Size = new Size(347, 129);
             slowModeGroup.TabIndex = 38;
             slowModeGroup.TabStop = false;
             slowModeGroup.Text = "Slow Mode Attributes";
             // 
-            // occuranceTimeBox
+            // label20
             // 
-            occuranceTimeBox.Location = new Point(266, 86);
-            occuranceTimeBox.Name = "occuranceTimeBox";
-            occuranceTimeBox.ReadOnly = true;
-            occuranceTimeBox.Size = new Size(23, 23);
-            occuranceTimeBox.TabIndex = 44;
-            occuranceTimeBox.Text = "10";
+            label20.AutoSize = true;
+            label20.BackColor = Color.WhiteSmoke;
+            label20.Location = new Point(298, 103);
+            label20.Name = "label20";
+            label20.Size = new Size(31, 15);
+            label20.TabIndex = 52;
+            label20.Text = "1000";
             // 
-            // sleepTimeBox
+            // label19
             // 
-            sleepTimeBox.Location = new Point(266, 33);
-            sleepTimeBox.Name = "sleepTimeBox";
-            sleepTimeBox.ReadOnly = true;
-            sleepTimeBox.Size = new Size(23, 23);
-            sleepTimeBox.TabIndex = 43;
-            sleepTimeBox.Text = "10";
+            label19.AutoSize = true;
+            label19.BackColor = Color.WhiteSmoke;
+            label19.Location = new Point(88, 103);
+            label19.Name = "label19";
+            label19.Size = new Size(13, 15);
+            label19.TabIndex = 51;
+            label19.Text = "1";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.BackColor = Color.WhiteSmoke;
+            label18.Location = new Point(306, 52);
+            label18.Name = "label18";
+            label18.Size = new Size(19, 15);
+            label18.TabIndex = 50;
+            label18.Text = "10";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.BackColor = Color.WhiteSmoke;
+            label10.Location = new Point(88, 52);
+            label10.Name = "label10";
+            label10.Size = new Size(13, 15);
+            label10.TabIndex = 49;
+            label10.Text = "0";
             // 
             // label14
             // 
@@ -605,7 +674,7 @@
             label14.Name = "label14";
             label14.Size = new Size(67, 36);
             label14.TabIndex = 43;
-            label14.Text = "Occurance Time[min]:";
+            label14.Text = "Occurance Time[s]:";
             // 
             // label13
             // 
@@ -618,20 +687,19 @@
             // occuranceTimeBar
             // 
             occuranceTimeBar.Location = new Point(81, 73);
-            occuranceTimeBar.Maximum = 20;
+            occuranceTimeBar.Maximum = 1000;
             occuranceTimeBar.Minimum = 1;
             occuranceTimeBar.Name = "occuranceTimeBar";
-            occuranceTimeBar.Size = new Size(179, 45);
+            occuranceTimeBar.Size = new Size(248, 45);
             occuranceTimeBar.TabIndex = 1;
-            occuranceTimeBar.Value = 1;
+            occuranceTimeBar.Value = 1000;
             occuranceTimeBar.Scroll += occuranceTimeBar_Scroll;
             // 
             // sleepTimeBar
             // 
             sleepTimeBar.Location = new Point(81, 22);
-            sleepTimeBar.Minimum = 1;
             sleepTimeBar.Name = "sleepTimeBar";
-            sleepTimeBar.Size = new Size(179, 45);
+            sleepTimeBar.Size = new Size(248, 45);
             sleepTimeBar.TabIndex = 0;
             sleepTimeBar.Value = 1;
             sleepTimeBar.Scroll += sleepTimeBar_Scroll;
@@ -647,21 +715,21 @@
             // 
             // replicationBox
             // 
-            replicationBox.Location = new Point(179, 6);
+            replicationBox.Location = new Point(236, 6);
             replicationBox.Name = "replicationBox";
             replicationBox.Size = new Size(84, 23);
             replicationBox.TabIndex = 36;
             replicationBox.Text = "10000";
             // 
-            // slowModeCheck
+            // fastModeCheck
             // 
-            slowModeCheck.AutoSize = true;
-            slowModeCheck.Location = new Point(364, 9);
-            slowModeCheck.Name = "slowModeCheck";
-            slowModeCheck.Size = new Size(15, 14);
-            slowModeCheck.TabIndex = 35;
-            slowModeCheck.UseVisualStyleBackColor = true;
-            slowModeCheck.CheckedChanged += checkBox1_CheckedChanged;
+            fastModeCheck.AutoSize = true;
+            fastModeCheck.Location = new Point(485, 11);
+            fastModeCheck.Name = "fastModeCheck";
+            fastModeCheck.Size = new Size(15, 14);
+            fastModeCheck.TabIndex = 35;
+            fastModeCheck.UseVisualStyleBackColor = true;
+            fastModeCheck.CheckedChanged += fastModeCheck_CheckedChanged;
             // 
             // label9
             // 
@@ -675,15 +743,16 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(289, 9);
+            label3.Location = new Point(346, 9);
             label3.Name = "label3";
-            label3.Size = new Size(69, 15);
+            label3.Size = new Size(65, 15);
             label3.TabIndex = 33;
-            label3.Text = "Slow Mode:";
+            label3.Text = "Fast Mode:";
+            label3.Click += label3_Click;
             // 
             // stopBut
             // 
-            stopBut.Location = new Point(6, 35);
+            stopBut.Location = new Point(6, 64);
             stopBut.Name = "stopBut";
             stopBut.Size = new Size(87, 23);
             stopBut.TabIndex = 32;
@@ -1040,7 +1109,7 @@
         private ColumnHeader columnHeader25;
         private ColumnHeader columnHeader29;
         private ColumnHeader columnHeader30;
-        private TextBox workers2Box;
+        private TextBox workers2AllBox;
         private TextBox workers1Box;
         private Label label12;
         private GroupBox slowModeGroup;
@@ -1050,13 +1119,11 @@
         private TrackBar sleepTimeBar;
         private Label label11;
         private TextBox replicationBox;
-        private CheckBox slowModeCheck;
+        private CheckBox fastModeCheck;
         private Label label9;
         private Label label3;
         private Button stopBut;
         private Label statusLabel;
-        private TextBox occuranceTimeBox;
-        private TextBox sleepTimeBox;
         private GroupBox groupBox3;
         private ListView localStatView;
         private ColumnHeader columnHeader31;
@@ -1085,5 +1152,12 @@
         private Button startButtonCH2;
         private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart chartViewCH2;
         private Label statusLabelCH2;
+        private Label label8;
+        private CheckBox advancedSimulationCheck;
+        private Label label7;
+        private TextBox workers2CarVanBox;
+        private Label label20;
+        private Label label19;
+        private Label label18;
     }
 }

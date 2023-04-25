@@ -8,6 +8,8 @@ namespace STK_AgentSimulation.agents
     //meta! id="5"
     public class AgentOffice : Agent
     {
+        public int arrivedVehicles { get; set; }
+        public int finishedVehicles { get; set; }
         public AgentOffice(int id, Simulation mySim, Agent parent) :
             base(id, mySim, parent)
         {
@@ -18,6 +20,8 @@ namespace STK_AgentSimulation.agents
         {
             base.PrepareReplication();
             // Setup component for the next replication
+            arrivedVehicles = 0;
+            finishedVehicles = 0;
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"

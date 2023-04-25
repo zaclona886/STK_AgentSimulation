@@ -1,7 +1,7 @@
 using LiveChartsCore.Defaults;
-using SimulatorLib.Simulations;
-using SimulatorLib.Simulations.EventSimulation.Implementation.STK.Others;
-using SimulatorLib.Simulations.EventSimulation.Implementation.STK.Simulation;
+using OSPABA;
+using STK_AgentSimulation.managers;
+using STK_AgentSimulation.simulation;
 using WinFormSP1.Models;
 
 namespace WinFormSP2
@@ -9,32 +9,26 @@ namespace WinFormSP2
     public partial class Form : System.Windows.Forms.Form
     {
         public ViewModel _viewModelCH1 = new ViewModel();
-        private SimulationCore chart1Simulation;
-
         public ViewModel _viewModelCH2 = new ViewModel();
-        private SimulationCore chart2Simulation;
 
-        private SimulationCore _simulation;
-        private bool simultionIsRunning;
-        private bool simulationIsPaused;
-        private bool slowModeOn;
+        //premenne pre nacitanie dat z GUI
+        private int _numberOfReplications;
+        private int _numberOfWorkers1;
+        private int _numberOfWorkers2AllVehicles;
+        private int _numberOfWorkers2CarVan;
 
-        private int sleepTime = 10;
+        //Simulacia a jej stav pre synchronizaciu s GUI
+        private MySimulation _sim;
+        private bool _isRunning = false;
+        private bool _isPaused = false;
+
+        private bool _fastMode = false;
         public Form()
         {
             InitializeComponent();
-            simultionIsRunning = false;
-            simulationIsPaused = false;
-
-            slowModeOn = false;
-            slowModeGroup.Visible = false;
-            slowModeGroup.Enabled = false;
-
-            sleepTimeBar.Value = 1;
-            sleepTimeBox.Text = "1";
-            occuranceTimeBar.Value = 1;
-            occuranceTimeBox.Text = "1";
-
+            InitializeSim();
+            InitializeGui();
+            //xxx graphs
             chartViewCH1.Series = _viewModelCH1.Series;
             chartViewCH1.XAxes = _viewModelCH1.xAxes;
             chartViewCH1.YAxes = _viewModelCH1.yAxes;
@@ -48,537 +42,494 @@ namespace WinFormSP2
             _viewModelCH2.SetXAxisName("Count of Worker2");
         }
 
+        private void InitializeSim()
+        {
+            _sim = new MySimulation();
+
+            _sim.OnRefreshUI(RefreshUI);
+            _sim.OnSimulationWillStart(OnSimulationWillStart);
+            _sim.OnReplicationWillStart(OnReplicationWillStart);
+            _sim.OnReplicationDidFinish(OnReplicationDidFinish);
+            _sim.OnSimulationDidFinish(OnSimulationDidFinish);
+        }
+
+        private void RefreshUI(Simulation obj)
+        {
+            Invoke((System.Action)(() =>
+            {
+
+                // Workers1
+                var countTrue = 0;
+                foreach (var item in ((ManagerOffice)_sim.AgentOffice.MyManager).workers1)
+                {
+                    if (item.isBusy)
+                    {
+                        countTrue++;
+                    }
+                }
+                workers1Label.Text = new string("Workers1, Busy: " + countTrue + " / " + ((ManagerOffice)_sim.AgentOffice.MyManager).workers1.Count);
+
+                workers1View.Items.Clear();
+                var i = 0;
+                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).workers1)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data.jobType?.ToString());
+                    item.SubItems.Add(data.vehicle?.id.ToString());
+                    workers1View.Items.Add(item);
+                    i++;
+                }
+
+                // Workers2 
+                countTrue = 0;
+                foreach (var item in ((ManagerGarage)_sim.AgentGarage.MyManager).workers2)
+                {
+                    if (item.isBusy)
+                    {
+                        countTrue++;
+                    }
+                }
+                workers2Label.Text = new string("Workers2, Busy: " + countTrue + " / " + ((ManagerGarage)_sim.AgentGarage.MyManager).workers2.Count);
+
+                workers2View.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerGarage)_sim.AgentGarage.MyManager).workers2)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data.jobType?.ToString());
+                    item.SubItems.Add(data.vehicle?.id.ToString());
+                    workers2View.Items.Add(item);
+                    i++;
+                }
+
+                // arived
+                arrivedVehiclesView.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).vehicleArrivalQueue)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data._vehicle.id.ToString());
+                    item.SubItems.Add(data._vehicle.vehicleType.ToString());
+                    var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
+                    simTime2 = simTime2.AddSeconds(data._vehicle.arrivalTime);
+                    item.SubItems.Add(simTime2.ToString("HH:mm:ss"));
+                    arrivedVehiclesView.Items.Add(item);
+                    i++;
+                }
+
+                // taken
+                takenVehiclesView.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).takenVehicles)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data.Value.id.ToString());
+                    item.SubItems.Add(data.Value.vehicleType.ToString());
+                    var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
+                    simTime2 = simTime2.AddSeconds(data.Value.arrivalTime);
+                    item.SubItems.Add(simTime2.ToString("HH:mm:ss"));
+                    takenVehiclesView.Items.Add(item);
+                    i++;
+                }
+
+                // parking
+                parkingVehiclesView.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerGarage)_sim.AgentGarage.MyManager).vehiclesParkingInFrontOfControlQueue)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data._vehicle.id.ToString());
+                    item.SubItems.Add(data._vehicle.vehicleType.ToString());
+                    var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
+                    simTime2 = simTime2.AddSeconds(data._vehicle.arrivalTime);
+                    item.SubItems.Add(simTime2.ToString("HH:mm:ss"));
+                    parkingVehiclesView.Items.Add(item);
+                    i++;
+                }
+
+                //controlled
+                controlledVehiclesView.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerGarage)_sim.AgentGarage.MyManager).controllingVehicles)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data.Value.id.ToString());
+                    item.SubItems.Add(data.Value.vehicleType.ToString());
+                    var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
+                    simTime2 = simTime2.AddSeconds(data.Value.arrivalTime);
+                    item.SubItems.Add(simTime2.ToString("HH:mm:ss"));
+                    controlledVehiclesView.Items.Add(item);
+                    i++;
+                }
+
+                //payment queue
+                paymentQueueView.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).vehiclePaymentQueue)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data._vehicle.id.ToString());
+                    item.SubItems.Add(data._vehicle.vehicleType.ToString());
+                    var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
+                    simTime2 = simTime2.AddSeconds(data._vehicle.arrivalTime);
+                    item.SubItems.Add(simTime2.ToString("HH:mm:ss"));
+                    paymentQueueView.Items.Add(item);
+                    i++;
+                }
+
+                //paying vehicles
+                payingView.Items.Clear();
+                i = 0;
+                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).payingVehicles)
+                {
+                    ListViewItem item = new ListViewItem((i + 1).ToString());
+                    item.SubItems.Add(data.Value.id.ToString());
+                    item.SubItems.Add(data.Value.vehicleType.ToString());
+                    var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
+                    simTime2 = simTime2.AddSeconds(data.Value.arrivalTime);
+                    payingView.Items.Add(item);
+                    i++;
+                }
+
+                //Local Statistics
+                localStatView.Items.Clear();
+                //finished replications
+                ListViewItem itemLocStat = new ListViewItem("Finished Replications");
+                itemLocStat.SubItems.Add(_sim.CurrentReplication.ToString());
+                localStatView.Items.Add(itemLocStat);
+
+                //Simulation Time
+                itemLocStat = new ListViewItem("Simulation Time");
+                var simTime = new DateTime(1, 1, 1, 9, 0, 0);
+                simTime = simTime.AddSeconds(_sim.CurrentTime);
+                itemLocStat.SubItems.Add(simTime.ToString("HH:mm:ss"));
+                localStatView.Items.Add(itemLocStat);
+
+                // Count of Finished Vehicles
+                itemLocStat = new ListViewItem("Count of Finished Vehicles");
+                itemLocStat.SubItems.Add(_sim.AgentOffice.finishedVehicles.ToString());
+                itemLocStat.SubItems.Add("Vehicle");
+                localStatView.Items.Add(itemLocStat);
+
+                //// Average count of Vehicles in the End xxxxx Not Displaying
+                //itemLocStat = new ListViewItem();
+                //localStatView.Items.Add(itemLocStat);
+
+                //// Average Count of Vehicles in System
+                //itemLocStat = new ListViewItem("Average Count of Vehicles in System");
+                //itemLocStat.SubItems.Add(_sim.averageCountOfVehiclesInSystem.GetResult().ToString("F5"));
+                //itemLocStat.SubItems.Add("Vehicle");
+                //localStatView.Items.Add(itemLocStat);
+
+                //// Average Time of Vehicles in System
+                //itemLocStat = new ListViewItem("Average Time of Vehicles in System");
+                //itemLocStat.SubItems.Add((_sim.averageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
+                //itemLocStat.SubItems.Add("Minute");
+                //localStatView.Items.Add(itemLocStat);
+
+                ////Average Count of Vehicle in Queue
+                //itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
+                //itemLocStat.SubItems.Add(_sim.averageCountOfVehiclesInQueue.GetResult().ToString("F5"));
+                //itemLocStat.SubItems.Add("Vehicle");
+                //localStatView.Items.Add(itemLocStat);
+
+                ////Average Time of Vehicle in Queue
+                //itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
+                //itemLocStat.SubItems.Add((_sim.averageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
+                //itemLocStat.SubItems.Add("Minute");
+                //localStatView.Items.Add(itemLocStat);
+
+                ////Average Count of Free Workers1
+                //itemLocStat = new ListViewItem("Average Count of Free Workers1");
+                //itemLocStat.SubItems.Add((_sim.averageCountOfFreeWorkers1.GetResult()).ToString("F5"));
+                //itemLocStat.SubItems.Add("Worker1");
+                //localStatView.Items.Add(itemLocStat);
+
+                ////Average Count of Free Workers2
+                //itemLocStat = new ListViewItem("Average Count of Free Workers2");
+                //itemLocStat.SubItems.Add((_sim.averageCountOfFreeWorkers2.GetResult()).ToString("F5"));
+                //itemLocStat.SubItems.Add("Worker2");
+                //localStatView.Items.Add(itemLocStat);
+            }));
+        }
+
+        private void OnSimulationWillStart(Simulation obj)
+        {
+            _isRunning = true;
+            _isPaused = false;
+
+            Invoke((System.Action)(() =>
+            {
+                startBut.Text = "Running";
+            }));
+        }
+
+        private void OnReplicationWillStart(Simulation obj)
+        {
+            SetSimSpeed();
+        }
+
+        private void SetSimSpeed()
+        {
+            int durationValue = -1;
+            int intervalValue = -1;
+
+            Invoke((System.Action)(() =>
+            {
+                durationValue = sleepTimeBar.Value;
+            }));
+
+            Invoke((System.Action)(() =>
+            {
+                intervalValue = occuranceTimeBar.Value;
+            }));
+
+            if (!_fastMode)
+            {
+                _sim.SetSimSpeed(intervalValue, durationValue);
+            }
+            else
+            {
+                _sim.SetMaxSimSpeed();
+            }
+        }
+
+        private void OnReplicationDidFinish(Simulation obj)
+        {
+            // display local statistics
+        }
+
+        private void OnSimulationDidFinish(Simulation obj)
+        {
+            _isRunning = false;
+            _isPaused = false;
+
+            Invoke((System.Action)(() =>
+            {
+                startBut.Text = "Start";
+            }));
+            // display global statistics
+            Invoke((System.Action)(() =>
+            {
+                // Update Global Statistics
+                globalStatView.Items.Clear();
+                //finished replications
+                ListViewItem itemLocStat = new ListViewItem("Finished Replications");
+                itemLocStat.SubItems.Add(_sim.CurrentReplication.ToString());
+                globalStatView.Items.Add(itemLocStat);
+
+                //Simulation Time xxx Not Displaying
+                itemLocStat = new ListViewItem();
+                globalStatView.Items.Add(itemLocStat);
+
+                // Count of Finished Vehicles
+                itemLocStat = new ListViewItem("Average Count of Finished Vehicles");
+                itemLocStat.SubItems.Add(_sim.globalAverageFinishedVehicles.GetResult().ToString("F5"));
+                itemLocStat.SubItems.Add("Vehicle");
+                globalStatView.Items.Add(itemLocStat);
+
+                // Average count of Vehicles in the End
+                itemLocStat = new ListViewItem("Average Count of Vehicles in the End");
+                itemLocStat.SubItems.Add(_sim.globalAverageLeftVehiclesInSystem.GetResult().ToString());
+                itemLocStat.SubItems.Add("Vehicle");
+                globalStatView.Items.Add(itemLocStat);
+
+                //// Average Count of Vehicles System
+                //itemLocStat = new ListViewItem("Average Count of Vehicles in System");
+                //itemLocStat.SubItems.Add(sim.globalAverageCountOfVehiclesInSystem.GetResult().ToString("F5"));
+                //itemLocStat.SubItems.Add("Vehicle");
+                //var listCI = sim.globalAverageCountOfVehiclesInSystem.getConfidenceInterval(95);
+                //itemLocStat.SubItems.Add("95%");
+                //itemLocStat.SubItems.Add("< " + (listCI[0]).ToString("F5"));
+                //itemLocStat.SubItems.Add((listCI[1]).ToString("F5") + " >");
+
+                //globalStatView.Items.Add(itemLocStat);
+
+                //// Average Time of Vehicles in System
+                //itemLocStat = new ListViewItem("Average Time of Vehicles in System");
+                //itemLocStat.SubItems.Add((sim.globalAverageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
+                //itemLocStat.SubItems.Add("Minute");
+                //listCI = sim.globalAverageTimeOfVehiclesInSystem.getConfidenceInterval(90);
+                //itemLocStat.SubItems.Add("90%");
+                //itemLocStat.SubItems.Add("< " + (listCI[0] / 60.0).ToString("F5"));
+                //itemLocStat.SubItems.Add((listCI[1] / 60.0).ToString("F5") + " >");
+
+                //globalStatView.Items.Add(itemLocStat);
+
+                ////Average Count of Vehicle in Queue
+                //itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
+                //itemLocStat.SubItems.Add(sim.globalAverageCountOfVehiclesInQueue.GetResult().ToString("F5"));
+                //itemLocStat.SubItems.Add("Vehicle");
+                //globalStatView.Items.Add(itemLocStat);
+
+                ////Average Time of Vehicle in Queue
+                //itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
+                //itemLocStat.SubItems.Add((sim.globalAverageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
+                //itemLocStat.SubItems.Add("Minute");
+                //globalStatView.Items.Add(itemLocStat);
+
+                ////Average Count of Free Workers1
+                //itemLocStat = new ListViewItem("Average Count of Free Workers1");
+                //itemLocStat.SubItems.Add((sim.globalAverageCountOfFreeWorkers1.GetResult()).ToString("F5"));
+                //itemLocStat.SubItems.Add("Worker1");
+                //globalStatView.Items.Add(itemLocStat);
+
+                ////Average Count of Free Workers2
+                //itemLocStat = new ListViewItem("Average Count of Free Workers2");
+                //itemLocStat.SubItems.Add((sim.globalAverageCountOfFreeWorkers2.GetResult()).ToString("F5"));
+                //itemLocStat.SubItems.Add("Worker2");
+                //globalStatView.Items.Add(itemLocStat);
+
+            }));
+        }
+        private void fastModeCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            _fastMode = fastModeCheck.Checked;
+            SetSimSpeed();
+            slowModeGroup.Visible = !slowModeGroup.Visible;
+        }
+
+        private void InitializeGui()
+        {
+
+        }
+
         private void startBut_Click(object sender, EventArgs e)
         {
+            if (!_isRunning) // start
+            {
+                if (!ReadInputParameters()) return;
+                Config.numberOfReplications = _numberOfReplications;
+                Config.numberOfWorkers1 = _numberOfWorkers1;
+                Config.numberOfWorkers2AllVehicles = _numberOfWorkers2AllVehicles;
+                Config.numberOfWorkers2VanCar = _numberOfWorkers2CarVan;
+                _isRunning = true;
+                _sim.SimulateAsync(Config.numberOfReplications, Config.simulationTime);
+            }
+        }
+
+        private bool ReadInputParameters()
+        {
+            //Reps
             var numberOfReplications = 0;
             if (!int.TryParse(replicationBox.Text, out numberOfReplications))
             {
                 statusLabel.Text = "Status: Replications have to be Number!";
-                return;
+                return false;
             }
             if (numberOfReplications <= 0)
             {
                 statusLabel.Text = "Status: There have to be more than 0 Replications";
-                return;
+                return false;
             }
 
+            //Workers1
             var numberOfWorkers1 = 0;
             if (!int.TryParse(workers1Box.Text, out numberOfWorkers1))
             {
                 statusLabel.Text = "Status: Workers1 have to be Number!";
-                return;
+                return false;
             }
             if (numberOfWorkers1 <= 0)
             {
                 statusLabel.Text = "Status: There have to be more than 0 Worker1";
-                return;
+                return false;
             }
 
-            var numberOfWorkers2 = 0;
-            if (!int.TryParse(workers2Box.Text, out numberOfWorkers2))
+            //Workers2All
+            var numberOfWorkers2AllVehicles = 0;
+            if (!int.TryParse(workers2AllBox.Text, out numberOfWorkers2AllVehicles))
             {
                 statusLabel.Text = "Status: Workers1 have to be Number!";
-                return;
+                return false;
             }
-            if (numberOfWorkers2 <= 0)
+            if (numberOfWorkers2AllVehicles <= 0)
             {
                 statusLabel.Text = "Status: There have to be more than 0 Worker1";
-                return;
+                return false;
             }
 
-            _simulation = new STKSimulation(numberOfReplications, 0,
-                slowModeOn, sleepTimeBar.Value, occuranceTimeBar.Value, numberOfWorkers1, numberOfWorkers2);
-
-            _simulation.Simulated += (sender, e) =>
+            //Workers2CarVan
+            var numberOfWorkers2CarVan = 0;
+            if (!int.TryParse(workers2CarVanBox.Text, out numberOfWorkers2CarVan))
             {
-
-                var sim = (STKSimulation)e;
-                if (!sim.replicationFinished && slowModeOn)
-                {
-                    this.Invoke((Action)(() =>
-                    {
-
-                        // Workers1
-                        var countTrue = 0;
-                        foreach (var item in sim.listWorkers1)
-                        {
-                            if (item.isBusy)
-                            {
-                                countTrue++;
-                            }
-                        }
-                        workers1Label.Text = new string("Workers1, Busy: " + countTrue + " / " + sim.numberOfWorkers1);
-
-                        workers1View.Items.Clear();
-                        var i = 0;
-                        foreach (var data in sim.listWorkers1)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.jobType?.ToString());
-                            item.SubItems.Add(data.vehicle?.id.ToString());
-                            workers1View.Items.Add(item);
-                            i++;
-                        }
-
-                        // Workers2 
-                        countTrue = 0;
-                        foreach (var item in sim.listWorkers2)
-                        {
-                            if (item.isBusy)
-                            {
-                                countTrue++;
-                            }
-                        }
-                        workers2Label.Text = new string("Workers2, Busy: " + countTrue + " / " + sim.numberOfWorkers2);
-                        parkingVehiclesLabel.Text = new string("Parking Vehicles Queue, Max: " + sim.maxVehicleParkingInFrontOfControl);
-
-                        workers2View.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.listWorkers2)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.jobType?.ToString());
-                            item.SubItems.Add(data.vehicle?.id.ToString());
-                            workers2View.Items.Add(item);
-                            i++;
-                        }
-
-                        // arived
-                        arrivedVehiclesView.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.vehicleArrivalQueue)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.id.ToString());
-                            item.SubItems.Add(data.vehicleType.ToString());
-                            var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
-                            simTime2 = simTime2.AddSeconds(data.arrivalTime);
-                            item.SubItems.Add(simTime2.ToString("hh:mm:ss"));
-                            arrivedVehiclesView.Items.Add(item);
-                            i++;
-                        }
-
-                        // taken
-                        takenVehiclesView.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.takenVehicles)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.Value.id.ToString());
-                            item.SubItems.Add(data.Value.vehicleType.ToString());
-                            var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
-                            simTime2 = simTime2.AddSeconds(data.Value.arrivalTime);
-                            item.SubItems.Add(simTime2.ToString("hh:mm:ss"));
-                            takenVehiclesView.Items.Add(item);
-                            i++;
-                        }
-
-                        // parking
-                        parkingVehiclesView.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.vehicleParkingInFrontOfControlQueue)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.id.ToString());
-                            item.SubItems.Add(data.vehicleType.ToString());
-                            var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
-                            simTime2 = simTime2.AddSeconds(data.arrivalTime);
-                            item.SubItems.Add(simTime2.ToString("hh:mm:ss"));
-                            parkingVehiclesView.Items.Add(item);
-                            i++;
-                        }
-
-                        //controlled
-                        controlledVehiclesView.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.controlledVehicles)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.Value.id.ToString());
-                            item.SubItems.Add(data.Value.vehicleType.ToString());
-                            var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
-                            simTime2 = simTime2.AddSeconds(data.Value.arrivalTime);
-                            item.SubItems.Add(simTime2.ToString("hh:mm:ss"));
-                            controlledVehiclesView.Items.Add(item);
-                            i++;
-                        }
-
-                        //payment queue
-                        paymentQueueView.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.vehiclePaymentQueue)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.id.ToString());
-                            item.SubItems.Add(data.vehicleType.ToString());
-                            var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
-                            simTime2 = simTime2.AddSeconds(data.arrivalTime);
-                            item.SubItems.Add(simTime2.ToString("hh:mm:ss"));
-                            paymentQueueView.Items.Add(item);
-                            i++;
-                        }
-
-                        //paying vehicles
-                        payingView.Items.Clear();
-                        i = 0;
-                        foreach (var data in sim.payingVehicles)
-                        {
-                            ListViewItem item = new ListViewItem((i + 1).ToString());
-                            item.SubItems.Add(data.Value.id.ToString());
-                            item.SubItems.Add(data.Value.vehicleType.ToString());
-                            var simTime2 = new DateTime(1, 1, 1, 9, 0, 0);
-                            simTime2 = simTime2.AddSeconds(data.Value.arrivalTime);
-                            payingView.Items.Add(item);
-                            i++;
-                        }
-
-                        //Local Statistics
-                        localStatView.Items.Clear();
-                        //finished replications
-                        ListViewItem itemLocStat = new ListViewItem("Finished Replications");
-                        itemLocStat.SubItems.Add(sim.finishedReplications.ToString());
-                        localStatView.Items.Add(itemLocStat);
-
-                        //Simulation Time
-                        itemLocStat = new ListViewItem("Simulation Time");
-                        var simTime = new DateTime(1, 1, 1, 9, 0, 0);
-                        simTime = simTime.AddSeconds(sim.currentTime);
-                        itemLocStat.SubItems.Add(simTime.ToString("hh:mm:ss"));
-                        localStatView.Items.Add(itemLocStat);
-
-                        // Count of Finished Vehicles
-                        itemLocStat = new ListViewItem("Count of Finished Vehicles");
-                        itemLocStat.SubItems.Add(sim.finishedVehicles.ToString());
-                        itemLocStat.SubItems.Add("Vehicle");
-                        localStatView.Items.Add(itemLocStat);
-
-                        // Average count of Vehicles in the End xxxxx Not Displaying
-                        itemLocStat = new ListViewItem();
-                        localStatView.Items.Add(itemLocStat);
-
-                        // Average Count of Vehicles in System
-                        itemLocStat = new ListViewItem("Average Count of Vehicles in System");
-                        itemLocStat.SubItems.Add(sim.averageCountOfVehiclesInSystem.GetResult().ToString("F5"));
-                        itemLocStat.SubItems.Add("Vehicle");
-                        localStatView.Items.Add(itemLocStat);
-
-                        // Average Time of Vehicles in System
-                        itemLocStat = new ListViewItem("Average Time of Vehicles in System");
-                        itemLocStat.SubItems.Add((sim.averageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
-                        itemLocStat.SubItems.Add("Minute");
-                        localStatView.Items.Add(itemLocStat);
-
-                        //Average Count of Vehicle in Queue
-                        itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
-                        itemLocStat.SubItems.Add(sim.averageCountOfVehiclesInQueue.GetResult().ToString("F5"));
-                        itemLocStat.SubItems.Add("Vehicle");
-                        localStatView.Items.Add(itemLocStat);
-
-                        //Average Time of Vehicle in Queue
-                        itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
-                        itemLocStat.SubItems.Add((sim.averageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
-                        itemLocStat.SubItems.Add("Minute");
-                        localStatView.Items.Add(itemLocStat);
-
-                        //Average Count of Free Workers1
-                        itemLocStat = new ListViewItem("Average Count of Free Workers1");
-                        itemLocStat.SubItems.Add((sim.averageCountOfFreeWorkers1.GetResult()).ToString("F5"));
-                        itemLocStat.SubItems.Add("Worker1");
-                        localStatView.Items.Add(itemLocStat);
-
-                        //Average Count of Free Workers2
-                        itemLocStat = new ListViewItem("Average Count of Free Workers2");
-                        itemLocStat.SubItems.Add((sim.averageCountOfFreeWorkers2.GetResult()).ToString("F5"));
-                        itemLocStat.SubItems.Add("Worker2");
-                        localStatView.Items.Add(itemLocStat);
-                    }));
-                }
-                if (sim.replicationFinished || sim.simulationFinished)
-                {
-
-                    if (numberOfReplications <= 1000)
-                    {
-                        Thread.Sleep(100);
-                    }
-
-                    this.Invoke((Action)(() =>
-                    {
-                        // Update Global Statistics
-                        globalStatView.Items.Clear();
-                        //finished replications
-                        ListViewItem itemLocStat = new ListViewItem("Finished Replications");
-                        itemLocStat.SubItems.Add(sim.finishedReplications.ToString());
-                        globalStatView.Items.Add(itemLocStat);
-
-                        //Simulation Time xxx Not Displaying
-                        itemLocStat = new ListViewItem();
-                        globalStatView.Items.Add(itemLocStat);
-
-                        // Count of Finished Vehicles
-                        itemLocStat = new ListViewItem("Average Count of Finished Vehicles");
-                        itemLocStat.SubItems.Add(sim.globalAverageFinishedVehicles.GetResult().ToString("F5"));
-                        itemLocStat.SubItems.Add("Vehicle");
-                        globalStatView.Items.Add(itemLocStat);
-
-                        // Average count of Vehicles in the End
-                        itemLocStat = new ListViewItem("Average Count of Vehicles in the End");
-                        itemLocStat.SubItems.Add(sim.globalAverageLeftVehiclesInSystem.GetResult().ToString());
-                        itemLocStat.SubItems.Add("Vehicle");
-                        globalStatView.Items.Add(itemLocStat);
-
-                        // Average Count of Vehicles System
-                        itemLocStat = new ListViewItem("Average Count of Vehicles in System");
-                        itemLocStat.SubItems.Add(sim.globalAverageCountOfVehiclesInSystem.GetResult().ToString("F5"));
-                        itemLocStat.SubItems.Add("Vehicle");
-                        var listCI = sim.globalAverageCountOfVehiclesInSystem.getConfidenceInterval(95);
-                        itemLocStat.SubItems.Add("95%");
-                        itemLocStat.SubItems.Add("< " + (listCI[0]).ToString("F5"));
-                        itemLocStat.SubItems.Add((listCI[1]).ToString("F5") + " >");
-
-                        globalStatView.Items.Add(itemLocStat);
-
-                        // Average Time of Vehicles in System
-                        itemLocStat = new ListViewItem("Average Time of Vehicles in System");
-                        itemLocStat.SubItems.Add((sim.globalAverageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
-                        itemLocStat.SubItems.Add("Minute");
-                        listCI = sim.globalAverageTimeOfVehiclesInSystem.getConfidenceInterval(90);
-                        itemLocStat.SubItems.Add("90%");
-                        itemLocStat.SubItems.Add("< " + (listCI[0] / 60.0).ToString("F5"));
-                        itemLocStat.SubItems.Add((listCI[1] / 60.0).ToString("F5") + " >");
-
-                        globalStatView.Items.Add(itemLocStat);
-
-                        //Average Count of Vehicle in Queue
-                        itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
-                        itemLocStat.SubItems.Add(sim.globalAverageCountOfVehiclesInQueue.GetResult().ToString("F5"));
-                        itemLocStat.SubItems.Add("Vehicle");
-                        globalStatView.Items.Add(itemLocStat);
-
-                        //Average Time of Vehicle in Queue
-                        itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
-                        itemLocStat.SubItems.Add((sim.globalAverageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
-                        itemLocStat.SubItems.Add("Minute");
-                        globalStatView.Items.Add(itemLocStat);
-
-                        //Average Count of Free Workers1
-                        itemLocStat = new ListViewItem("Average Count of Free Workers1");
-                        itemLocStat.SubItems.Add((sim.globalAverageCountOfFreeWorkers1.GetResult()).ToString("F5"));
-                        itemLocStat.SubItems.Add("Worker1");
-                        globalStatView.Items.Add(itemLocStat);
-
-                        //Average Count of Free Workers2
-                        itemLocStat = new ListViewItem("Average Count of Free Workers2");
-                        itemLocStat.SubItems.Add((sim.globalAverageCountOfFreeWorkers2.GetResult()).ToString("F5"));
-                        itemLocStat.SubItems.Add("Worker2");
-                        globalStatView.Items.Add(itemLocStat);
-
-                    }));
-                }
-                this.Invoke((Action)(() =>
-                {
-                    statusLabel.Text = new string("Status: Simulation is Running");
-                }));
-            };
-
-            // Run the calculate function in a separate thread
-            Thread calculateThread = new Thread(() =>
+                statusLabel.Text = "Status: Workers1 have to be Number!";
+                return false;
+            }
+            if (numberOfWorkers2CarVan <= 0)
             {
-                _simulation.Simulate();
-                this.Invoke((Action)(() =>
-                {
-                    statusLabel.Text = "Status: Simulation Finished";
-                    replicationBox.ReadOnly = false;
-                    workers1Box.ReadOnly = false;
-                    workers2Box.ReadOnly = false;
-                    _simulation = null;
-                }));
+                statusLabel.Text = "Status: There have to be more than 0 Worker1";
+                return false;
+            }
 
-            });
-
-            // Simulation run Start
-            calculateThread.Start();
-            statusLabel.Text = "Status: Simulation is Running";
-            replicationBox.ReadOnly = true;
-            workers1Box.ReadOnly = true;
-            workers2Box.ReadOnly = true;
+            _numberOfReplications = numberOfReplications;
+            _numberOfWorkers1 = numberOfWorkers1;
+            _numberOfWorkers2AllVehicles = numberOfWorkers2AllVehicles;
+            _numberOfWorkers2CarVan = numberOfWorkers2CarVan;
+            return true;
         }
 
         private void pauseButton_Click(object sender, EventArgs e)
         {
-            if (_simulation != null)
+            if (_isRunning)
             {
-                var sim = (STKSimulation)_simulation;
-                sim.PausePlayReplicationRun();
-                simulationIsPaused = !simulationIsPaused;
-                if (simulationIsPaused)
+                if (!_isPaused) // pause
                 {
-                    statusLabel.Text = "Status: Simulation is Paused";
+                    _isPaused = true;
+                    _sim.PauseSimulation();
+                    pauseButton.Text = "Play";
                 }
-                else
+                else // resume
                 {
-                    statusLabel.Text = "Status: Simulation is Running";
+                    _isPaused = false;
+                    _sim.ResumeSimulation();
+                    pauseButton.Text = "Pause";
                 }
-            }
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_simulation != null)
-            {
-                var sim = (STKSimulation)_simulation;
-                sim.SlowModeTurnOnOff();
-            }
-
-            slowModeOn = slowModeCheck.Checked;
-            if (slowModeOn)
-            {
-                slowModeGroup.Visible = true;
-                slowModeGroup.Enabled = true;
-            }
-            else
-            {
-                slowModeGroup.Visible = false;
-                slowModeGroup.Enabled = false;
             }
         }
 
         private void stopBut_Click(object sender, EventArgs e)
         {
-            if (_simulation != null)
+            if (_isRunning) // stop
             {
-                var sim = (STKSimulation)_simulation;
-                sim.StopSimulationRun();
+                _sim.StopSimulation();
             }
         }
 
         private void sleepTimeBar_Scroll(object sender, EventArgs e)
         {
-            sleepTimeBox.Text = sleepTimeBar.Value.ToString();
-            if (_simulation != null)
-            {
-                var sim = (STKSimulation)_simulation;
-                sim.SetSleepOccurranceTime(sleepTimeBar.Value, occuranceTimeBar.Value);
-            }
+            SetSimSpeed();
         }
 
         private void occuranceTimeBar_Scroll(object sender, EventArgs e)
         {
-            occuranceTimeBox.Text = occuranceTimeBar.Value.ToString();
-            if (_simulation != null)
-            {
-                var sim = (STKSimulation)_simulation;
-                sim.SetSleepOccurranceTime(sleepTimeBar.Value, occuranceTimeBar.Value);
-            }
+            SetSimSpeed();
         }
 
+        // Charts Tabs Controll Buttons
         private async void startButtonCH1_Click(object sender, EventArgs e)
         {
-            long numberOfReplications = 0;
-            if (!long.TryParse(repBoxCH1.Text, out numberOfReplications))
-            {
-                statusLabelCH1.Text = "Replications have to be Number!";
-                return;
-            }
 
-            int numberOfWorkers2 = 0;
-            if (!int.TryParse(worker2BoxCH1.Text, out numberOfWorkers2))
-            {
-                statusLabelCH1.Text = "Workers2 have to be Number!";
-                return;
-            }
-
-            _viewModelCH1.Reset();
-            startButtonCH1.Enabled = false;
-            repBoxCH1.Enabled = false;
-            worker2BoxCH1.Enabled = false;
-
-            for (int i = 1; i < 16; i++)
-            {
-                chart1Simulation = new STKSimulation(numberOfReplications, 0,
-                false, 0, 0, i, numberOfWorkers2);
-                await Task.Run(() =>
-                {
-                    chart1Simulation.Simulate();
-                });
-                if (chart1Simulation.simulationStoped)
-                {
-                    chart1Simulation = null;
-                    return;
-                }
-                var sim = (STKSimulation)chart1Simulation;
-                ObservablePoint new_point = new ObservablePoint(i, sim.globalAverageCountOfVehiclesInQueue.GetResult());
-                _viewModelCH1.AddPoint(new_point);
-            }
-            startButtonCH1.Enabled = true;
-            repBoxCH1.Enabled = true;
-            worker2BoxCH1.Enabled = true;
         }
 
         private void stopButtonCH1_Click(object sender, EventArgs e)
         {
-            if (chart1Simulation != null)
-            {
-                chart1Simulation.StopSimulationRun();
-                startButtonCH1.Enabled = true;
-                repBoxCH1.Enabled = true;
-                worker2BoxCH1.Enabled = true;
-            }
+
         }
 
         private async void startButtonCH2_Click(object sender, EventArgs e)
         {
-            long numberOfReplications = 0;
-            if (!long.TryParse(repBoxCH2.Text, out numberOfReplications))
-            {
-                statusLabelCH2.Text = "Replications have to be Number!";
-                return;
-            }
 
-            int numberOfWorkers1 = 0;
-            if (!int.TryParse(worker1BoxCH2.Text, out numberOfWorkers1))
-            {
-                statusLabelCH2.Text = "Workers2 have to be Number!";
-                return;
-            }
-
-            _viewModelCH2.Reset();
-            startButtonCH2.Enabled = false;
-            repBoxCH2.Enabled = false;
-            worker1BoxCH2.Enabled = false;
-
-            for (int i = 10; i < 26; i++)
-            {
-                chart2Simulation = new STKSimulation(numberOfReplications, 0,
-                false, 0, 0, numberOfWorkers1, i);
-                await Task.Run(() =>
-                {
-                    chart2Simulation.Simulate();
-                });
-                if (chart2Simulation.simulationStoped)
-                {
-                    chart2Simulation = null;
-                    return;
-                }
-                var sim = (STKSimulation)chart2Simulation;
-                ObservablePoint new_point = new ObservablePoint(i, sim.globalAverageTimeOfVehiclesInSystem.GetResult() / 60.0);
-                _viewModelCH2.AddPoint(new_point);
-            }
-
-            startButtonCH2.Enabled = true;
-            repBoxCH2.Enabled = true;
-            worker1BoxCH2.Enabled = true;
         }
 
         private void stopButtonCH2_Click(object sender, EventArgs e)
         {
-            if (chart2Simulation != null)
-            {
-                chart2Simulation.StopSimulationRun();
-                startButtonCH2.Enabled = true;
-                repBoxCH2.Enabled = true;
-                worker1BoxCH2.Enabled = true;
-            }
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -7,7 +7,6 @@ namespace STK_AgentSimulation.simulation
     public class MyMessage : MessageForm
     {
         public STKVehicle? _vehicle { get; set; }
-        public double arrivalTime { get; set; }
         public STKWorker? _worker { get; set; }
 
         public int freeParkingSlots { get; set; }
@@ -34,7 +33,6 @@ namespace STK_AgentSimulation.simulation
             MyMessage original = (MyMessage)message;
             // Copy attributes
             _vehicle = original._vehicle;
-            arrivalTime = original.arrivalTime;
 
             _worker = original._worker;
 

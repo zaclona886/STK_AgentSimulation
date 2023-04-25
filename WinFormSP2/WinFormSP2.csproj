@@ -16,4 +16,14 @@
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WinForms" Version="2.0.0-beta.701" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\STK_AgentSimulation\STK_AgentSimulation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ABACore">
+      <HintPath>..\..\..\TESTING\TestNovinovyStanok\Newsstand\TestNewsstand\ABACore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

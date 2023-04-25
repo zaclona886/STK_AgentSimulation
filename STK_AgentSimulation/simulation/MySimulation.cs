@@ -1,10 +1,14 @@
 using OSPABA;
 using STK_AgentSimulation.agents;
+using STK_AgentSimulation.MyOthers.Statistics;
 
 namespace STK_AgentSimulation.simulation
 {
     public class MySimulation : Simulation
     {
+        //Global Statistics
+        public NormalStatistic globalAverageFinishedVehicles { get; set; }
+        public NormalStatistic globalAverageLeftVehiclesInSystem { get; set; }
         public MySimulation()
         {
             Init();
@@ -14,6 +18,8 @@ namespace STK_AgentSimulation.simulation
         {
             base.PrepareSimulation();
             // Create global statistcis
+            globalAverageFinishedVehicles = new NormalStatistic(this);
+            globalAverageLeftVehiclesInSystem = new NormalStatistic(this);
         }
 
         override protected void PrepareReplication()
@@ -26,6 +32,8 @@ namespace STK_AgentSimulation.simulation
         {
             // Collect local statistics into global, update UI, etc...
             base.ReplicationFinished();
+            globalAverageFinishedVehicles.AddValue(AgentOffice.finishedVehicles);
+            globalAverageLeftVehiclesInSystem.AddValue(AgentOffice.arrivedVehicles - AgentOffice.finishedVehicles);
         }
 
         override protected void SimulationFinished()

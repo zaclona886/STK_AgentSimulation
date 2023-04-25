@@ -55,8 +55,9 @@ namespace STK_AgentSimulation.continualAssistants
                         MessageForm copy = message.CreateCopy();
                         ((MyMessage)copy)._vehicle = CreateVehicle();
                         Hold(time, copy);                      
-                        AssistantFinished(message);
-                    } 
+                        
+                    }
+                    AssistantFinished(message);
                     break;
             }
         }
@@ -66,7 +67,7 @@ namespace STK_AgentSimulation.continualAssistants
 		{
             ((MyMessage)message).Code = Mc.NewVehicle;
             ((MyMessage)message)._vehicle = CreateVehicle();
-            Hold(expoDistCarsArrival.getNextValue(), message);
+            Hold(0, message);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"
