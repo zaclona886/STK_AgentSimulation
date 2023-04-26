@@ -13,7 +13,6 @@ namespace STK_AgentSimulation.agents
         {
             Init();
         }
-
         override public void PrepareReplication()
         {
             base.PrepareReplication();

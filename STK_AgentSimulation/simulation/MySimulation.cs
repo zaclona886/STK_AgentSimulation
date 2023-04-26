@@ -11,6 +11,13 @@ namespace STK_AgentSimulation.simulation
         public NormalStatistic globalAverageLeftVehiclesInSystem { get; set; }
 
         public NormalStatistic globalAverageCountOfVehiclesInSystem { get; set; }
+        public NormalStatistic globalAverageTimeOfVehiclesInSystem { get; set; }
+
+        public NormalStatistic globalAverageCountOfVehiclesInQueue { get; set; }
+        public NormalStatistic globalAverageTimeOfVehiclesInQueue { get; set; }
+
+        public NormalStatistic globalAverageCountOfFreeWorkers1 { get; set; }
+        public NormalStatistic globalAverageCountOfFreeWorkers2 { get; set; }
         public MySimulation()
         {
             Init();
@@ -22,7 +29,15 @@ namespace STK_AgentSimulation.simulation
             // Create global statistcis
             globalAverageFinishedVehicles = new NormalStatistic(this);
             globalAverageLeftVehiclesInSystem = new NormalStatistic(this);
+
             globalAverageCountOfVehiclesInSystem = new NormalStatistic(this);
+            globalAverageTimeOfVehiclesInSystem = new NormalStatistic(this);
+
+            globalAverageCountOfVehiclesInQueue = new NormalStatistic(this);
+            globalAverageTimeOfVehiclesInQueue = new NormalStatistic(this);
+
+            globalAverageCountOfFreeWorkers1 = new NormalStatistic(this);
+            globalAverageCountOfFreeWorkers2 = new NormalStatistic(this);
         }
 
         override protected void PrepareReplication()
@@ -39,6 +54,13 @@ namespace STK_AgentSimulation.simulation
             globalAverageLeftVehiclesInSystem.AddValue(AgentOffice.arrivedVehicles - AgentOffice.finishedVehicles);
 
             globalAverageCountOfVehiclesInSystem.AddValue(AgentOffice.averageCountOfVehiclesInSystem.GetResult());
+            globalAverageTimeOfVehiclesInSystem.AddValue(AgentOffice.averageTimeOfVehiclesInSystem.GetResult());
+
+            globalAverageCountOfVehiclesInQueue.AddValue(AgentOffice.averageCountOfVehiclesInQueue.GetResult());
+            globalAverageTimeOfVehiclesInQueue.AddValue(AgentOffice.averageTimeOfVehiclesInQueue.GetResult());
+
+            globalAverageCountOfFreeWorkers1.AddValue(AgentOffice.averageCountOfFreeWorkers1.GetResult());
+            globalAverageCountOfFreeWorkers2.AddValue(AgentGarage.averageCountOfFreeWorkers2.GetResult());
         }
 
         override protected void SimulationFinished()

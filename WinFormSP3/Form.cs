@@ -23,6 +23,8 @@ namespace WinFormSP2
         private bool _isPaused = false;
 
         private bool _fastMode = false;
+        private bool _advancedSimulation = false;
+        private bool _strongerCurrentOfVehicles = false;
         public Form()
         {
             InitializeComponent();
@@ -46,6 +48,7 @@ namespace WinFormSP2
         {
             _sim = new MySimulation();
 
+            _sim = new MySimulation();
             _sim.OnRefreshUI(RefreshUI);
             _sim.OnSimulationWillStart(OnSimulationWillStart);
             _sim.OnReplicationWillStart(OnReplicationWillStart);
@@ -98,6 +101,8 @@ namespace WinFormSP2
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data.jobType?.ToString());
                     item.SubItems.Add(data.vehicle?.id.ToString());
+                    item.SubItems.Add(data.vehicle?.vehicleType.ToString());
+                    item.SubItems.Add(data.certificate.ToString());
                     workers2View.Items.Add(item);
                     i++;
                 }
@@ -194,7 +199,7 @@ namespace WinFormSP2
                 //Local Statistics
                 localStatView.Items.Clear();
                 //finished replications
-                ListViewItem itemLocStat = new ListViewItem("Finished Replications");
+                ListViewItem itemLocStat = new ListViewItem("Current Replication");
                 itemLocStat.SubItems.Add((_sim.CurrentReplication + 1).ToString());
                 localStatView.Items.Add(itemLocStat);
 
@@ -221,35 +226,35 @@ namespace WinFormSP2
                 itemLocStat.SubItems.Add("Vehicle");
                 localStatView.Items.Add(itemLocStat);
 
-                //// Average Time of Vehicles in System
-                //itemLocStat = new ListViewItem("Average Time of Vehicles in System");
-                //itemLocStat.SubItems.Add((_sim.averageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
-                //itemLocStat.SubItems.Add("Minute");
-                //localStatView.Items.Add(itemLocStat);
+                // Average Time of Vehicles in System
+                itemLocStat = new ListViewItem("Average Time of Vehicles in System");
+                itemLocStat.SubItems.Add((_sim.AgentOffice.averageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
+                itemLocStat.SubItems.Add("Minute");
+                localStatView.Items.Add(itemLocStat);
 
-                ////Average Count of Vehicle in Queue
-                //itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
-                //itemLocStat.SubItems.Add(_sim.averageCountOfVehiclesInQueue.GetResult().ToString("F5"));
-                //itemLocStat.SubItems.Add("Vehicle");
-                //localStatView.Items.Add(itemLocStat);
+                //Average Count of Vehicle in Queue
+                itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
+                itemLocStat.SubItems.Add(_sim.AgentOffice.averageCountOfVehiclesInQueue.GetResult().ToString("F5"));
+                itemLocStat.SubItems.Add("Vehicle");
+                localStatView.Items.Add(itemLocStat);
 
-                ////Average Time of Vehicle in Queue
-                //itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
-                //itemLocStat.SubItems.Add((_sim.averageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
-                //itemLocStat.SubItems.Add("Minute");
-                //localStatView.Items.Add(itemLocStat);
+                //Average Time of Vehicle in Queue
+                itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
+                itemLocStat.SubItems.Add((_sim.AgentOffice.averageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
+                itemLocStat.SubItems.Add("Minute");
+                localStatView.Items.Add(itemLocStat);
 
-                ////Average Count of Free Workers1
-                //itemLocStat = new ListViewItem("Average Count of Free Workers1");
-                //itemLocStat.SubItems.Add((_sim.averageCountOfFreeWorkers1.GetResult()).ToString("F5"));
-                //itemLocStat.SubItems.Add("Worker1");
-                //localStatView.Items.Add(itemLocStat);
+                //Average Count of Free Workers1
+                itemLocStat = new ListViewItem("Average Count of Free Workers1");
+                itemLocStat.SubItems.Add((_sim.AgentOffice.averageCountOfFreeWorkers1.GetResult()).ToString("F5"));
+                itemLocStat.SubItems.Add("Worker1");
+                localStatView.Items.Add(itemLocStat);
 
-                ////Average Count of Free Workers2
-                //itemLocStat = new ListViewItem("Average Count of Free Workers2");
-                //itemLocStat.SubItems.Add((_sim.averageCountOfFreeWorkers2.GetResult()).ToString("F5"));
-                //itemLocStat.SubItems.Add("Worker2");
-                //localStatView.Items.Add(itemLocStat);
+                //Average Count of Free Workers2
+                itemLocStat = new ListViewItem("Average Count of Free Workers2");
+                itemLocStat.SubItems.Add((_sim.AgentGarage.averageCountOfFreeWorkers2.GetResult()).ToString("F5"));
+                itemLocStat.SubItems.Add("Worker2");
+                localStatView.Items.Add(itemLocStat);
             }));
         }
 
@@ -261,6 +266,30 @@ namespace WinFormSP2
             Invoke((System.Action)(() =>
             {
                 startBut.Text = "Running";
+                startBut.Enabled = false;
+                replicationBox.Enabled = false;
+                workers1Box.Enabled = false;
+                workers2AllBox.Enabled = false;
+                workers2CarVanBox.Enabled = false;
+                advancedSimulationCheck.Enabled = false;
+                strongerCurrentOfVehiclesCheck.Enabled = false;
+
+                salaryWorker1label.Text = "Worker 1 Salary: " + Config.salaryWorker1 +
+                    ", " + Config.salaryWorker1 + "*" + Config.numberOfWorkers1 +
+                    "= " + Config.salaryWorker1 * Config.numberOfWorkers1;
+
+                salaryWorker2Alllabel.Text = "Worker 2, All Vehicles Certificate, Salary: " + Config.salaryWorker2AllVehicles +
+                    ", " + Config.salaryWorker2AllVehicles + "*" + Config.numberOfWorkers2AllVehicles +
+                    "= " + Config.salaryWorker2AllVehicles * Config.numberOfWorkers2AllVehicles;
+
+                salaryWorker2CarVanlabel.Text = "Worker 2, Car & Van Certificate, Salary: " + Config.salaryWorker2VanCar +
+                    ", " + Config.salaryWorker2VanCar + "*" + Config.numberOfWorkers2VanCar +
+                    "= " + Config.salaryWorker2VanCar * Config.numberOfWorkers2VanCar;
+
+                salaryTotallabel.Text = "Total Month Salary: " +
+                    (Config.salaryWorker1 * Config.numberOfWorkers1 +
+                    Config.salaryWorker2AllVehicles * Config.numberOfWorkers2AllVehicles +
+                    Config.salaryWorker2VanCar * Config.numberOfWorkers2VanCar);
             }));
         }
 
@@ -297,18 +326,10 @@ namespace WinFormSP2
         private void OnReplicationDidFinish(Simulation obj)
         {
             // display local statistics
+            UpdateGlobalStats();
         }
-
-        private void OnSimulationDidFinish(Simulation obj)
+        private void UpdateGlobalStats()
         {
-            _isRunning = false;
-            _isPaused = false;
-
-            Invoke((System.Action)(() =>
-            {
-                startBut.Text = "Start";
-            }));
-            // display global statistics
             Invoke((System.Action)(() =>
             {
                 // Update Global Statistics
@@ -344,43 +365,61 @@ namespace WinFormSP2
                 itemLocStat.SubItems.Add((listCI[1]).ToString("F5") + " >");
                 globalStatView.Items.Add(itemLocStat);
 
-                //// Average Time of Vehicles in System
-                //itemLocStat = new ListViewItem("Average Time of Vehicles in System");
-                //itemLocStat.SubItems.Add((sim.globalAverageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
-                //itemLocStat.SubItems.Add("Minute");
-                //listCI = sim.globalAverageTimeOfVehiclesInSystem.getConfidenceInterval(90);
-                //itemLocStat.SubItems.Add("90%");
-                //itemLocStat.SubItems.Add("< " + (listCI[0] / 60.0).ToString("F5"));
-                //itemLocStat.SubItems.Add((listCI[1] / 60.0).ToString("F5") + " >");
+                // Average Time of Vehicles in System
+                itemLocStat = new ListViewItem("Average Time of Vehicles in System");
+                itemLocStat.SubItems.Add((_sim.globalAverageTimeOfVehiclesInSystem.GetResult() / 60.0).ToString("F5"));
+                itemLocStat.SubItems.Add("Minute");
+                listCI = _sim.globalAverageTimeOfVehiclesInSystem.getConfidenceInterval(90);
+                itemLocStat.SubItems.Add("90%");
+                itemLocStat.SubItems.Add("< " + (listCI[0] / 60.0).ToString("F5"));
+                itemLocStat.SubItems.Add((listCI[1] / 60.0).ToString("F5") + " >");
+                globalStatView.Items.Add(itemLocStat);
 
-                //globalStatView.Items.Add(itemLocStat);
+                //Average Count of Vehicle in Queue
+                itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
+                itemLocStat.SubItems.Add(_sim.globalAverageCountOfVehiclesInQueue.GetResult().ToString("F5"));
+                itemLocStat.SubItems.Add("Vehicle");
+                globalStatView.Items.Add(itemLocStat);
 
-                ////Average Count of Vehicle in Queue
-                //itemLocStat = new ListViewItem("Average Count of Vehicles in Queue");
-                //itemLocStat.SubItems.Add(sim.globalAverageCountOfVehiclesInQueue.GetResult().ToString("F5"));
-                //itemLocStat.SubItems.Add("Vehicle");
-                //globalStatView.Items.Add(itemLocStat);
+                //Average Time of Vehicle in Queue
+                itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
+                itemLocStat.SubItems.Add((_sim.globalAverageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
+                itemLocStat.SubItems.Add("Minute");
+                globalStatView.Items.Add(itemLocStat);
 
-                ////Average Time of Vehicle in Queue
-                //itemLocStat = new ListViewItem("Average Time of Vehicles in Queue");
-                //itemLocStat.SubItems.Add((sim.globalAverageTimeOfVehiclesInQueue.GetResult() / 60.0).ToString("F5"));
-                //itemLocStat.SubItems.Add("Minute");
-                //globalStatView.Items.Add(itemLocStat);
+                //Average Count of Free Workers1
+                itemLocStat = new ListViewItem("Average Count of Free Workers1");
+                itemLocStat.SubItems.Add((_sim.globalAverageCountOfFreeWorkers1.GetResult()).ToString("F5"));
+                itemLocStat.SubItems.Add("Worker1");
+                globalStatView.Items.Add(itemLocStat);
 
-                ////Average Count of Free Workers1
-                //itemLocStat = new ListViewItem("Average Count of Free Workers1");
-                //itemLocStat.SubItems.Add((sim.globalAverageCountOfFreeWorkers1.GetResult()).ToString("F5"));
-                //itemLocStat.SubItems.Add("Worker1");
-                //globalStatView.Items.Add(itemLocStat);
-
-                ////Average Count of Free Workers2
-                //itemLocStat = new ListViewItem("Average Count of Free Workers2");
-                //itemLocStat.SubItems.Add((sim.globalAverageCountOfFreeWorkers2.GetResult()).ToString("F5"));
-                //itemLocStat.SubItems.Add("Worker2");
-                //globalStatView.Items.Add(itemLocStat);
+                //Average Count of Free Workers2
+                itemLocStat = new ListViewItem("Average Count of Free Workers2");
+                itemLocStat.SubItems.Add((_sim.globalAverageCountOfFreeWorkers2.GetResult()).ToString("F5"));
+                itemLocStat.SubItems.Add("Worker2");
+                globalStatView.Items.Add(itemLocStat);
 
             }));
         }
+
+        private void OnSimulationDidFinish(Simulation obj)
+        {
+            _isRunning = false;
+            _isPaused = false;
+            Invoke((System.Action)(() =>
+            {
+                startBut.Text = "Start";
+                startBut.Enabled = true;
+                replicationBox.Enabled = true;
+                workers1Box.Enabled = true;
+                workers2AllBox.Enabled = true;
+                workers2CarVanBox.Enabled = true;
+                advancedSimulationCheck.Enabled = true;
+                strongerCurrentOfVehiclesCheck.Enabled = true;
+            }));
+        }
+
+
         private void fastModeCheck_CheckedChanged(object sender, EventArgs e)
         {
             _fastMode = fastModeCheck.Checked;
@@ -390,7 +429,21 @@ namespace WinFormSP2
 
         private void InitializeGui()
         {
+            workers2CarVanBox.Enabled = false;
+            workers2CarVanBox.Visible = false;
+            workers2CarVanLabel.Enabled = false;
+            workers2CarVanLabel.Visible = false;
 
+            salaryWorker1label.Text = "Worker 1 Salary: ";
+            salaryWorker2Alllabel.Text = "Worker 2, All Vehicles Certificate, Salary: ";
+            salaryWorker2CarVanlabel.Text = "Worker 2, Car & Van Certificate, Salary: ";
+            salaryTotallabel.Text = "Total Month Salary: ";
+
+            strongerCurrentOfVehiclesCheck.Enabled = false;
+            strongerCurrentOfVehiclesCheck.Visible = false;
+
+            strongerCurrentOfVehiclesLabel.Enabled = false;
+            strongerCurrentOfVehiclesLabel.Visible = false;
         }
 
         private void startBut_Click(object sender, EventArgs e)
@@ -401,70 +454,80 @@ namespace WinFormSP2
                 Config.numberOfReplications = _numberOfReplications;
                 Config.numberOfWorkers1 = _numberOfWorkers1;
                 Config.numberOfWorkers2AllVehicles = _numberOfWorkers2AllVehicles;
-                Config.numberOfWorkers2VanCar = _numberOfWorkers2CarVan;
+
+                Config.advancedSimulation = _advancedSimulation;
+                if (_advancedSimulation)
+                {
+                    if (!ReadAdvancedInputParameters()) return;
+                    Config.numberOfWorkers2VanCar = _numberOfWorkers2CarVan;
+                    Config.strongerCurrentOfVehicles = _strongerCurrentOfVehicles;
+                }
+                else
+                {
+                    Config.numberOfWorkers2VanCar = 0;
+                    Config.strongerCurrentOfVehicles = false;
+                }
+
                 _isRunning = true;
                 _sim.SimulateAsync(Config.numberOfReplications, Config.simulationTime);
             }
         }
 
+        private bool ReadAdvancedInputParameters()
+        {
+            //Workers2CarVan
+            if (!int.TryParse(workers2CarVanBox.Text, out _numberOfWorkers2CarVan))
+            {
+                statusLabel.Text = "Status: Workers1 have to be Number!";
+                return false;
+            }
+            if (_numberOfWorkers2CarVan < 0)
+            {
+                statusLabel.Text = "Status: There have to be more than -1 Workers2CarVan";
+                return false;
+            }
+
+            _strongerCurrentOfVehicles = strongerCurrentOfVehiclesCheck.Checked;
+            return true;
+        }
+
         private bool ReadInputParameters()
         {
             //Reps
-            var numberOfReplications = 0;
-            if (!int.TryParse(replicationBox.Text, out numberOfReplications))
+            if (!int.TryParse(replicationBox.Text, out _numberOfReplications))
             {
                 statusLabel.Text = "Status: Replications have to be Number!";
                 return false;
             }
-            if (numberOfReplications <= 0)
+            if (_numberOfReplications <= 0)
             {
                 statusLabel.Text = "Status: There have to be more than 0 Replications";
                 return false;
             }
 
-            //Workers1
-            var numberOfWorkers1 = 0;
-            if (!int.TryParse(workers1Box.Text, out numberOfWorkers1))
+            //Workers1           
+            if (!int.TryParse(workers1Box.Text, out _numberOfWorkers1))
             {
                 statusLabel.Text = "Status: Workers1 have to be Number!";
                 return false;
             }
-            if (numberOfWorkers1 <= 0)
+            if (_numberOfWorkers1 <= 0)
             {
-                statusLabel.Text = "Status: There have to be more than 0 Worker1";
+                statusLabel.Text = "Status: There have to be more than 0 Workers1";
                 return false;
             }
 
             //Workers2All
-            var numberOfWorkers2AllVehicles = 0;
-            if (!int.TryParse(workers2AllBox.Text, out numberOfWorkers2AllVehicles))
+            if (!int.TryParse(workers2AllBox.Text, out _numberOfWorkers2AllVehicles))
             {
                 statusLabel.Text = "Status: Workers1 have to be Number!";
                 return false;
             }
-            if (numberOfWorkers2AllVehicles <= 0)
+            if (_numberOfWorkers2AllVehicles <= 0)
             {
-                statusLabel.Text = "Status: There have to be more than 0 Worker1";
+                statusLabel.Text = "Status: There have to be more than 0 Workers2AllVehicles";
                 return false;
             }
-
-            //Workers2CarVan
-            var numberOfWorkers2CarVan = 0;
-            if (!int.TryParse(workers2CarVanBox.Text, out numberOfWorkers2CarVan))
-            {
-                statusLabel.Text = "Status: Workers1 have to be Number!";
-                return false;
-            }
-            if (numberOfWorkers2CarVan <= 0)
-            {
-                statusLabel.Text = "Status: There have to be more than 0 Worker1";
-                return false;
-            }
-
-            _numberOfReplications = numberOfReplications;
-            _numberOfWorkers1 = numberOfWorkers1;
-            _numberOfWorkers2AllVehicles = numberOfWorkers2AllVehicles;
-            _numberOfWorkers2CarVan = numberOfWorkers2CarVan;
             return true;
         }
 
@@ -505,6 +568,42 @@ namespace WinFormSP2
             SetSimSpeed();
         }
 
+        private void advancedSimulationCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            _advancedSimulation = advancedSimulationCheck.Checked;
+            workers2CarVanBox.Enabled = advancedSimulationCheck.Checked;
+            workers2CarVanBox.Visible = advancedSimulationCheck.Checked;
+            workers2CarVanLabel.Enabled = advancedSimulationCheck.Checked;
+            workers2CarVanLabel.Visible = advancedSimulationCheck.Checked;
+            if (advancedSimulationCheck.Checked == false)
+            {
+                strongerCurrentOfVehiclesCheck.Checked = false;
+                strongerCurrentOfVehiclesCheck.Enabled = false;
+                strongerCurrentOfVehiclesCheck.Visible = false;
+
+                strongerCurrentOfVehiclesLabel.Enabled = false;
+                strongerCurrentOfVehiclesLabel.Visible = false;
+            }
+            else
+            {
+                strongerCurrentOfVehiclesCheck.Enabled = true;
+                strongerCurrentOfVehiclesCheck.Visible = true;
+
+                strongerCurrentOfVehiclesLabel.Enabled = true;
+                strongerCurrentOfVehiclesLabel.Visible = true;
+            }
+        }
+
+        private void fastModeCheck_CheckStateChanged(object sender, EventArgs e)
+        {
+            _fastMode = fastModeCheck.Checked;
+            if (_sim != null)
+            {
+                SetSimSpeed();
+            }
+            slowModeGroup.Visible = !slowModeGroup.Visible;
+        }
+
         // Charts Tabs Controll Buttons
         private async void startButtonCH1_Click(object sender, EventArgs e)
         {
@@ -522,11 +621,6 @@ namespace WinFormSP2
         }
 
         private void stopButtonCH2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
         {
 
         }

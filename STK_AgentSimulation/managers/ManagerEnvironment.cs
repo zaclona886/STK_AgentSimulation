@@ -7,7 +7,6 @@ namespace STK_AgentSimulation.managers
     //meta! id="2"
     public class ManagerEnvironment : Manager
     {
-        private int vehicleId { get; set; }
         public ManagerEnvironment(int id, Simulation mySim, Agent myAgent) :
             base(id, mySim, myAgent)
         {
@@ -36,7 +35,7 @@ namespace STK_AgentSimulation.managers
 		//meta! sender="AgentModel", id="11", type="Notice"
 		public void ProcessVehicleLeave(MessageForm message)
         {
-            _ = "ahoj";
+            var ahoj = "Ahoj";
         }
 
 		//meta! sender="VehicleArriveScheduler", id="27", type="Finish"

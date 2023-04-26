@@ -2,12 +2,14 @@ using OSPABA;
 using STK_AgentSimulation.simulation;
 using STK_AgentSimulation.managers;
 using STK_AgentSimulation.continualAssistants;
+using STK_AgentSimulation.MyOthers.Statistics;
 
 namespace STK_AgentSimulation.agents
 {
     //meta! id="6"
     public class AgentGarage : Agent
     {
+        public WeightStatistic averageCountOfFreeWorkers2 { get; set; }
         public AgentGarage(int id, Simulation mySim, Agent parent) :
             base(id, mySim, parent)
         {
@@ -18,6 +20,7 @@ namespace STK_AgentSimulation.agents
         {
             base.PrepareReplication();
             // Setup component for the next replication
+            averageCountOfFreeWorkers2 = new WeightStatistic(MySim);
         }
 
 		//meta! userInfo="Generated code: do not modify", tag="begin"

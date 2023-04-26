@@ -70,8 +70,16 @@
             payingVehiclesLabel = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            workers2CarVanBox = new TextBox();
+            strongerCurrentOfVehiclesCheck = new CheckBox();
+            strongerCurrentOfVehiclesLabel = new Label();
+            groupBox5 = new GroupBox();
+            salaryTotallabel = new Label();
+            salaryWorker2CarVanlabel = new Label();
             label8 = new Label();
+            salaryWorker2Alllabel = new Label();
+            salaryWorker1label = new Label();
+            workers2CarVanBox = new TextBox();
+            workers2CarVanLabel = new Label();
             advancedSimulationCheck = new CheckBox();
             label7 = new Label();
             groupBox4 = new GroupBox();
@@ -112,6 +120,8 @@
             columnHeader26 = new ColumnHeader();
             columnHeader27 = new ColumnHeader();
             columnHeader28 = new ColumnHeader();
+            columnHeader34 = new ColumnHeader();
+            columnHeader35 = new ColumnHeader();
             workers1View = new ListView();
             columnHeader25 = new ColumnHeader();
             columnHeader29 = new ColumnHeader();
@@ -136,6 +146,7 @@
             chartViewCH2 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox5.SuspendLayout();
             groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
             slowModeGroup.SuspendLayout();
@@ -169,7 +180,7 @@
             // workers2Label
             // 
             workers2Label.AutoSize = true;
-            workers2Label.Location = new Point(230, 19);
+            workers2Label.Location = new Point(192, 19);
             workers2Label.Name = "workers2Label";
             workers2Label.Size = new Size(110, 15);
             workers2Label.TabIndex = 2;
@@ -426,8 +437,11 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(strongerCurrentOfVehiclesCheck);
+            tabPage1.Controls.Add(strongerCurrentOfVehiclesLabel);
+            tabPage1.Controls.Add(groupBox5);
             tabPage1.Controls.Add(workers2CarVanBox);
-            tabPage1.Controls.Add(label8);
+            tabPage1.Controls.Add(workers2CarVanLabel);
             tabPage1.Controls.Add(advancedSimulationCheck);
             tabPage1.Controls.Add(label7);
             tabPage1.Controls.Add(groupBox4);
@@ -455,6 +469,82 @@
             tabPage1.Text = "Simulation";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // strongerCurrentOfVehiclesCheck
+            // 
+            strongerCurrentOfVehiclesCheck.AutoSize = true;
+            strongerCurrentOfVehiclesCheck.Location = new Point(533, 49);
+            strongerCurrentOfVehiclesCheck.Name = "strongerCurrentOfVehiclesCheck";
+            strongerCurrentOfVehiclesCheck.Size = new Size(15, 14);
+            strongerCurrentOfVehiclesCheck.TabIndex = 51;
+            strongerCurrentOfVehiclesCheck.UseVisualStyleBackColor = true;
+            // 
+            // strongerCurrentOfVehiclesLabel
+            // 
+            strongerCurrentOfVehiclesLabel.AutoSize = true;
+            strongerCurrentOfVehiclesLabel.Location = new Point(346, 48);
+            strongerCurrentOfVehiclesLabel.Name = "strongerCurrentOfVehiclesLabel";
+            strongerCurrentOfVehiclesLabel.Size = new Size(156, 15);
+            strongerCurrentOfVehiclesLabel.TabIndex = 50;
+            strongerCurrentOfVehiclesLabel.Text = "Stronger Current Of Vehicles";
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(salaryTotallabel);
+            groupBox5.Controls.Add(salaryWorker2CarVanlabel);
+            groupBox5.Controls.Add(label8);
+            groupBox5.Controls.Add(salaryWorker2Alllabel);
+            groupBox5.Controls.Add(salaryWorker1label);
+            groupBox5.Location = new Point(950, 9);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(475, 129);
+            groupBox5.TabIndex = 49;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Monthly Salaries";
+            // 
+            // salaryTotallabel
+            // 
+            salaryTotallabel.AutoSize = true;
+            salaryTotallabel.Location = new Point(6, 78);
+            salaryTotallabel.Name = "salaryTotallabel";
+            salaryTotallabel.Size = new Size(87, 15);
+            salaryTotallabel.TabIndex = 4;
+            salaryTotallabel.Text = "salaryTotallabel";
+            // 
+            // salaryWorker2CarVanlabel
+            // 
+            salaryWorker2CarVanlabel.AutoSize = true;
+            salaryWorker2CarVanlabel.Location = new Point(6, 58);
+            salaryWorker2CarVanlabel.Name = "salaryWorker2CarVanlabel";
+            salaryWorker2CarVanlabel.Size = new Size(143, 15);
+            salaryWorker2CarVanlabel.TabIndex = 3;
+            salaryWorker2CarVanlabel.Text = "salaryWorker2CarVanlabel";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(6, 66);
+            label8.Name = "label8";
+            label8.Size = new Size(0, 15);
+            label8.TabIndex = 2;
+            // 
+            // salaryWorker2Alllabel
+            // 
+            salaryWorker2Alllabel.AutoSize = true;
+            salaryWorker2Alllabel.Location = new Point(6, 39);
+            salaryWorker2Alllabel.Name = "salaryWorker2Alllabel";
+            salaryWorker2Alllabel.Size = new Size(120, 15);
+            salaryWorker2Alllabel.TabIndex = 1;
+            salaryWorker2Alllabel.Text = "salaryWorker2Alllabel";
+            // 
+            // salaryWorker1label
+            // 
+            salaryWorker1label.AutoSize = true;
+            salaryWorker1label.Location = new Point(6, 19);
+            salaryWorker1label.Name = "salaryWorker1label";
+            salaryWorker1label.Size = new Size(106, 15);
+            salaryWorker1label.TabIndex = 0;
+            salaryWorker1label.Text = "salaryWorker1label";
+            // 
             // workers2CarVanBox
             // 
             workers2CarVanBox.Location = new Point(236, 97);
@@ -463,28 +553,29 @@
             workers2CarVanBox.TabIndex = 48;
             workers2CarVanBox.Text = "1";
             // 
-            // label8
+            // workers2CarVanLabel
             // 
-            label8.AutoSize = true;
-            label8.Location = new Point(99, 100);
-            label8.Name = "label8";
-            label8.Size = new Size(99, 15);
-            label8.TabIndex = 47;
-            label8.Text = "Workers2,CarVan:";
+            workers2CarVanLabel.AutoSize = true;
+            workers2CarVanLabel.Location = new Point(99, 100);
+            workers2CarVanLabel.Name = "workers2CarVanLabel";
+            workers2CarVanLabel.Size = new Size(99, 15);
+            workers2CarVanLabel.TabIndex = 47;
+            workers2CarVanLabel.Text = "Workers2,CarVan:";
             // 
             // advancedSimulationCheck
             // 
             advancedSimulationCheck.AutoSize = true;
-            advancedSimulationCheck.Location = new Point(485, 36);
+            advancedSimulationCheck.Location = new Point(533, 29);
             advancedSimulationCheck.Name = "advancedSimulationCheck";
             advancedSimulationCheck.Size = new Size(15, 14);
             advancedSimulationCheck.TabIndex = 46;
             advancedSimulationCheck.UseVisualStyleBackColor = true;
+            advancedSimulationCheck.CheckedChanged += advancedSimulationCheck_CheckedChanged;
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(346, 35);
+            label7.Location = new Point(346, 28);
             label7.Name = "label7";
             label7.Size = new Size(120, 15);
             label7.TabIndex = 45;
@@ -497,7 +588,7 @@
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(599, 255);
+            groupBox4.Size = new Size(575, 255);
             groupBox4.TabIndex = 44;
             groupBox4.TabStop = false;
             groupBox4.Text = "Global Statistics";
@@ -507,7 +598,7 @@
             globalStatView.Columns.AddRange(new ColumnHeader[] { columnHeader36, columnHeader37, columnHeader33, columnHeader38, columnHeader39, columnHeader40 });
             globalStatView.Location = new Point(6, 19);
             globalStatView.Name = "globalStatView";
-            globalStatView.Size = new Size(587, 227);
+            globalStatView.Size = new Size(565, 227);
             globalStatView.TabIndex = 31;
             globalStatView.UseCompatibleStateImageBehavior = false;
             globalStatView.View = View.Details;
@@ -515,7 +606,7 @@
             // columnHeader36
             // 
             columnHeader36.Text = "Description";
-            columnHeader36.Width = 230;
+            columnHeader36.Width = 210;
             // 
             // columnHeader37
             // 
@@ -544,11 +635,11 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(localStatView);
-            groupBox3.Location = new Point(615, 142);
+            groupBox3.Location = new Point(587, 143);
             groupBox3.Margin = new Padding(3, 2, 3, 2);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
-            groupBox3.Size = new Size(381, 255);
+            groupBox3.Size = new Size(357, 255);
             groupBox3.TabIndex = 43;
             groupBox3.TabStop = false;
             groupBox3.Text = "Local Statistics";
@@ -558,7 +649,7 @@
             localStatView.Columns.AddRange(new ColumnHeader[] { columnHeader31, columnHeader32, Unit });
             localStatView.Location = new Point(6, 19);
             localStatView.Name = "localStatView";
-            localStatView.Size = new Size(369, 227);
+            localStatView.Size = new Size(345, 227);
             localStatView.TabIndex = 31;
             localStatView.UseCompatibleStateImageBehavior = false;
             localStatView.View = View.Details;
@@ -566,7 +657,7 @@
             // columnHeader31
             // 
             columnHeader31.Text = "Description";
-            columnHeader31.Width = 230;
+            columnHeader31.Width = 210;
             // 
             // columnHeader32
             // 
@@ -621,7 +712,7 @@
             slowModeGroup.Controls.Add(label13);
             slowModeGroup.Controls.Add(occuranceTimeBar);
             slowModeGroup.Controls.Add(sleepTimeBar);
-            slowModeGroup.Location = new Point(518, 6);
+            slowModeGroup.Location = new Point(597, 9);
             slowModeGroup.Name = "slowModeGroup";
             slowModeGroup.Size = new Size(347, 129);
             slowModeGroup.TabIndex = 38;
@@ -724,12 +815,12 @@
             // fastModeCheck
             // 
             fastModeCheck.AutoSize = true;
-            fastModeCheck.Location = new Point(485, 11);
+            fastModeCheck.Location = new Point(533, 11);
             fastModeCheck.Name = "fastModeCheck";
             fastModeCheck.Size = new Size(15, 14);
             fastModeCheck.TabIndex = 35;
             fastModeCheck.UseVisualStyleBackColor = true;
-            fastModeCheck.CheckedChanged += fastModeCheck_CheckedChanged;
+            fastModeCheck.CheckStateChanged += fastModeCheck_CheckStateChanged;
             // 
             // label9
             // 
@@ -745,10 +836,9 @@
             label3.AutoSize = true;
             label3.Location = new Point(346, 9);
             label3.Name = "label3";
-            label3.Size = new Size(65, 15);
+            label3.Size = new Size(62, 15);
             label3.TabIndex = 33;
-            label3.Text = "Fast Mode:";
-            label3.Click += label3_Click;
+            label3.Text = "Fast Mode";
             // 
             // stopBut
             // 
@@ -787,19 +877,19 @@
             groupBox1.Controls.Add(workers1View);
             groupBox1.Controls.Add(workers1Label);
             groupBox1.Controls.Add(workers2Label);
-            groupBox1.Location = new Point(1006, 142);
+            groupBox1.Location = new Point(950, 142);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(455, 255);
+            groupBox1.Size = new Size(511, 255);
             groupBox1.TabIndex = 30;
             groupBox1.TabStop = false;
             groupBox1.Text = "Workers Information";
             // 
             // workers2View
             // 
-            workers2View.Columns.AddRange(new ColumnHeader[] { columnHeader26, columnHeader27, columnHeader28 });
-            workers2View.Location = new Point(230, 37);
+            workers2View.Columns.AddRange(new ColumnHeader[] { columnHeader26, columnHeader27, columnHeader28, columnHeader34, columnHeader35 });
+            workers2View.Location = new Point(192, 37);
             workers2View.Name = "workers2View";
-            workers2View.Size = new Size(215, 209);
+            workers2View.Size = new Size(313, 209);
             workers2View.TabIndex = 31;
             workers2View.UseCompatibleStateImageBehavior = false;
             workers2View.View = View.Details;
@@ -807,24 +897,33 @@
             // columnHeader26
             // 
             columnHeader26.Text = "No.";
-            columnHeader26.Width = 40;
+            columnHeader26.Width = 35;
             // 
             // columnHeader27
             // 
             columnHeader27.Text = "JobType";
-            columnHeader27.Width = 90;
+            columnHeader27.Width = 80;
             // 
             // columnHeader28
             // 
             columnHeader28.Text = "VehicleId";
-            columnHeader28.Width = 80;
+            // 
+            // columnHeader34
+            // 
+            columnHeader34.Text = "Type";
+            columnHeader34.Width = 50;
+            // 
+            // columnHeader35
+            // 
+            columnHeader35.Text = "Certificate";
+            columnHeader35.Width = 90;
             // 
             // workers1View
             // 
             workers1View.Columns.AddRange(new ColumnHeader[] { columnHeader25, columnHeader29, columnHeader30 });
-            workers1View.Location = new Point(9, 37);
+            workers1View.Location = new Point(6, 37);
             workers1View.Name = "workers1View";
-            workers1View.Size = new Size(215, 209);
+            workers1View.Size = new Size(180, 209);
             workers1View.TabIndex = 30;
             workers1View.UseCompatibleStateImageBehavior = false;
             workers1View.View = View.Details;
@@ -832,17 +931,16 @@
             // columnHeader25
             // 
             columnHeader25.Text = "No.";
-            columnHeader25.Width = 40;
+            columnHeader25.Width = 35;
             // 
             // columnHeader29
             // 
             columnHeader29.Text = "JobType";
-            columnHeader29.Width = 90;
+            columnHeader29.Width = 80;
             // 
             // columnHeader30
             // 
             columnHeader30.Text = "VehicleId";
-            columnHeader30.Width = 80;
             // 
             // tabPage4
             // 
@@ -1033,6 +1131,8 @@
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             slowModeGroup.ResumeLayout(false);
@@ -1152,12 +1252,22 @@
         private Button startButtonCH2;
         private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart chartViewCH2;
         private Label statusLabelCH2;
-        private Label label8;
+        private Label workers2CarVanLabel;
         private CheckBox advancedSimulationCheck;
         private Label label7;
         private TextBox workers2CarVanBox;
         private Label label20;
         private Label label19;
         private Label label18;
+        private GroupBox groupBox5;
+        private Label salaryTotallabel;
+        private Label salaryWorker2CarVanlabel;
+        private Label label8;
+        private Label salaryWorker2Alllabel;
+        private Label salaryWorker1label;
+        private ColumnHeader columnHeader35;
+        private ColumnHeader columnHeader34;
+        private CheckBox strongerCurrentOfVehiclesCheck;
+        private Label strongerCurrentOfVehiclesLabel;
     }
 }

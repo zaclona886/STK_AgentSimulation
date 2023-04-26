@@ -28,7 +28,7 @@ namespace STK_AgentSimulation.managers
 		//meta! sender="AgentOffice", id="20", type="Response"
 		public void ProcessVehicleServiceAgentOffice(MessageForm message)
         {
-            message.Code = Mc.VehicleControl;
+            message.Code = Mc.VehicleService;
             Response(message);
         }
 

@@ -8,7 +8,7 @@ namespace STK_AgentSimulation.MyOthers.Distributions
 {
     public static class SeedGenerator
     {
-        private static readonly Random CustomRNG = new Random();
+        private static readonly Random CustomRNG = new Random(1);
 
         public static int GetNextInt()
         {

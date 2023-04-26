@@ -53,10 +53,17 @@ namespace STK_AgentSimulation.managers
         //meta! sender="AgentSTK", id="20", type="Request"
         public void ProcessVehicleService(MessageForm message)
         {
+            // Stats {begin}
             MyAgent.arrivedVehicles++;
             MyAgent.averageCountOfVehiclesInSystem.AddValue(MyAgent.arrivedVehicles - MyAgent.finishedVehicles);
+            // {end}
 
             ((MyMessage)message)._vehicle.arrivalTime = MySim.CurrentTime;
+
+            // Stats {begin}
+            MyAgent.averageCountOfVehiclesInQueue.AddValue(vehicleArrivalQueue.Count);
+            // {end}
+
             vehicleArrivalQueue.Enqueue(message as MyMessage);
 
             message.Code = Mc.CheckSpace;
@@ -87,9 +94,11 @@ namespace STK_AgentSimulation.managers
         //meta! sender="VehiclePaymentProcess", id="18", type="Finish"
         public void ProcessFinishVehiclePaymentProcess(MessageForm message)
         {
+            // Stats {begin}
             MyAgent.finishedVehicles++;
             MyAgent.averageCountOfVehiclesInSystem.AddValue(MyAgent.arrivedVehicles - MyAgent.finishedVehicles);
-
+            MyAgent.averageTimeOfVehiclesInSystem.AddValue(MySim.CurrentTime - ((MyMessage)message)._vehicle.arrivalTime);
+            // {end}
 
             message.Code = Mc.VehicleService;
             message.Addressee = MySim.FindAgent(SimId.AgentSTK);
@@ -134,10 +143,20 @@ namespace STK_AgentSimulation.managers
         {
             TryToScheduleBreak();
             TryToServePaymentQueue();
-            if ((((MyMessage)message).freeParkingSlots + ((MyMessage)message).freeWorkers2) > takenVehicles.Count)
+            if (Config.advancedSimulation)
             {
-                TryToServeArrivalQueue();
+                if ((((MyMessage)message).freeParkingSlots) > takenVehicles.Count)
+                {
+                    TryToServeArrivalQueue();
+                }
+            } else
+            {
+                if ((((MyMessage)message).freeParkingSlots + ((MyMessage)message).freeWorkers2) > takenVehicles.Count)
+                {
+                    TryToServeArrivalQueue();
+                }
             }
+            
         }
         private void TryToServePaymentQueue()
         {
@@ -145,8 +164,13 @@ namespace STK_AgentSimulation.managers
             {
                 STKWorker? freeWorker = GetFreeWorker();
                 if (freeWorker != null)
-                {
+                {                   
                     MessageForm message = vehiclePaymentQueue.Dequeue();
+
+                    //stats {begin}
+                    MyAgent.averageCountOfFreeWorkers1.AddValue(CountFreeWorkers());
+                    // {end}
+
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Paying;
                     freeWorker.vehicle = ((MyMessage)message)._vehicle;
@@ -165,7 +189,17 @@ namespace STK_AgentSimulation.managers
                 STKWorker? freeWorker = GetFreeWorker();
                 if (freeWorker != null)
                 {
+                    // Stats {begin}
+                    MyAgent.averageCountOfVehiclesInQueue.AddValue(vehicleArrivalQueue.Count);
+                    // {end}
+
                     MessageForm message = vehicleArrivalQueue.Dequeue();
+
+                    // Stats {begin}
+                    MyAgent.averageTimeOfVehiclesInQueue.AddValue(MySim.CurrentTime - ((MyMessage)message)._vehicle.arrivalTime);                   
+                    MyAgent.averageCountOfFreeWorkers1.AddValue(CountFreeWorkers());
+                    // {end}
+
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Checking;
                     freeWorker.vehicle = ((MyMessage)message)._vehicle;
@@ -188,9 +222,22 @@ namespace STK_AgentSimulation.managers
             }
             return null;
         }
+        private int CountFreeWorkers()
+        {
+            int countFree = 0;
+            foreach (STKWorker data in workers1)
+            {
+                if (!data.isBusy) countFree++;
+            }
+            return countFree;
+        }
 
         private void SetWorkerJobDone(MyMessage? message)
         {
+            // Stats {begin}
+            MyAgent.averageCountOfFreeWorkers1.AddValue(CountFreeWorkers());
+            // {end}
+
             message._worker.isBusy = false;
             message._worker.jobType = null;
             message._worker.vehicle = null;
@@ -219,6 +266,10 @@ namespace STK_AgentSimulation.managers
                 {
                     if (!data.isBusy & data.breakDoneAt == 0)
                     {
+                        //stats {begin}
+                        MyAgent.averageCountOfFreeWorkers1.AddValue(CountFreeWorkers());
+                        // {end}
+
                         data.isBusy = true;
                         data.jobType = JobType.Break;
                         MyMessage message = new MyMessage(MySim);

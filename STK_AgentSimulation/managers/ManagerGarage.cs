@@ -61,13 +61,25 @@ namespace STK_AgentSimulation.managers
         }
 
         private void TryToServeParkedVehicles()
-        {
+        {           
+
             if (vehiclesParkingInFrontOfControlQueue.Count > 0)
             {
-                STKWorker? freeWorker = GetFreeWorker();
+                STKWorker? freeWorker = null;
+                if (Config.advancedSimulation)
+                {
+                    freeWorker = GetFreeWorkerAdvanced();
+                } else
+                {
+                    freeWorker = GetFreeWorker();
+                }
+                
                 if (freeWorker != null)
                 {
                     MessageForm message = vehiclesParkingInFrontOfControlQueue.Dequeue();
+                    // Stats {begin}
+                    MyAgent.averageCountOfFreeWorkers2.AddValue(CountFreeWorkers());
+                    // {end}
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Controlling;
                     freeWorker.vehicle = ((MyMessage)message)._vehicle;
@@ -77,6 +89,16 @@ namespace STK_AgentSimulation.managers
                     StartContinualAssistant(message);
                 }
             }
+        }
+
+        private int CountFreeWorkers()
+        {
+            int countFree = 0;
+            foreach (STKWorker data in workers2)
+            {
+                if (!data.isBusy) countFree++;
+            }
+            return countFree;
         }
 
         private STKWorker? GetFreeWorker()
@@ -90,9 +112,34 @@ namespace STK_AgentSimulation.managers
             }
             return null;
         }
+        private STKWorker? GetFreeWorkerAdvanced()
+        {
+            if (vehiclesParkingInFrontOfControlQueue.Peek()._vehicle.vehicleType == VehicleType.Truck)
+            {
+                foreach (STKWorker data in workers2)
+                {
+                    if (!data.isBusy & data.certificate == CertificateType.AllVehicles)
+                    {
+                        return data;
+                    }
+                }
+                return null;
 
-		//meta! sender="VehicleControlProcess", id="24", type="Finish"
-		public void ProcessFinishVehicleControlProcess(MessageForm message)
+            } else
+            {
+                foreach (STKWorker data in workers2)
+                {
+                    if (!data.isBusy & data.certificate == CertificateType.VanCar)
+                    {
+                        return data;
+                    }
+                }
+                return GetFreeWorker();
+            }
+        }
+
+        //meta! sender="VehicleControlProcess", id="24", type="Finish"
+        public void ProcessFinishVehicleControlProcess(MessageForm message)
         {
             // Control of Vehicle in Garage
             message.Code = Mc.VehicleControl;
@@ -152,6 +199,9 @@ namespace STK_AgentSimulation.managers
                 {
                     if (!data.isBusy & data.breakDoneAt == 0)
                     {
+                        // Stats {begin}
+                        MyAgent.averageCountOfFreeWorkers2.AddValue(CountFreeWorkers());
+                        // {end}
                         data.isBusy = true;
                         data.jobType = JobType.Break;
                         MyMessage message = new MyMessage(MySim);
@@ -164,6 +214,9 @@ namespace STK_AgentSimulation.managers
         }
         private void SetWorkerJobDone(MyMessage? message)
         {
+            // Stats {begin}
+            MyAgent.averageCountOfFreeWorkers2.AddValue(CountFreeWorkers());
+            // {end}
             message._worker.isBusy = false;
             message._worker.jobType = null;
             message._worker.vehicle = null;
