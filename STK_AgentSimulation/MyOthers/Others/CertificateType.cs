@@ -9,7 +9,7 @@ namespace STK_AgentSimulation.MyOthers.Others
     public enum CertificateType
     {
         Basic,
-        VanCar,
+        CarVan,
         AllVehicles,
     }
 }

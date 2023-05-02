@@ -8,11 +8,7 @@ namespace STK_AgentSimulation.managers
 {
     //meta! id="6"
     public class ManagerGarage : Manager
-    {
-        public Dictionary<int, STKVehicle> controllingVehicles { get; set; }
-        public Queue<MyMessage> vehiclesParkingInFrontOfControlQueue { get; set; }
-        public List<STKWorker> workers2 { get; set; }
-        public bool breakTime { get; set; }
+    {       
         public ManagerGarage(int id, Simulation mySim, Agent myAgent) :
             base(id, mySim, myAgent)
         {
@@ -27,34 +23,13 @@ namespace STK_AgentSimulation.managers
             if (PetriNet != null)
             {
                 PetriNet.Clear();
-            }
-
-            workers2 = new List<STKWorker>();
-            for (int i = 0; i < Config.numberOfWorkers2AllVehicles; i++)
-            {
-                var newWorker = new STKWorker();
-                newWorker.certificate = CertificateType.AllVehicles;
-                workers2.Add(newWorker);
-            }
-            if (Config.advancedSimulation)
-            {
-                for (int i = 0; i < Config.numberOfWorkers2VanCar; i++)
-                {
-                    var newWorker = new STKWorker();
-                    newWorker.certificate = CertificateType.VanCar;
-                    workers2.Add(newWorker);
-                }
-            }
-            vehiclesParkingInFrontOfControlQueue = new Queue<MyMessage>();
-            controllingVehicles = new Dictionary<int, STKVehicle>();
-            breakTime = false;
-
+            }            
         }
 
 		//meta! sender="AgentSTK", id="21", type="Request"
 		public void ProcessVehicleControl(MessageForm message)
         {
-            vehiclesParkingInFrontOfControlQueue.Enqueue(message as MyMessage);
+            MyAgent.vehiclesParkingInFrontOfControlQueue.Enqueue(message as MyMessage);
 
             TryToScheduleBreak();
             TryToServeParkedVehicles();
@@ -63,7 +38,7 @@ namespace STK_AgentSimulation.managers
         private void TryToServeParkedVehicles()
         {           
 
-            if (vehiclesParkingInFrontOfControlQueue.Count > 0)
+            if (MyAgent.vehiclesParkingInFrontOfControlQueue.Count > 0)
             {
                 STKWorker? freeWorker = null;
                 if (Config.advancedSimulation)
@@ -76,34 +51,52 @@ namespace STK_AgentSimulation.managers
                 
                 if (freeWorker != null)
                 {
-                    MessageForm message = vehiclesParkingInFrontOfControlQueue.Dequeue();
+                    MessageForm message = MyAgent.vehiclesParkingInFrontOfControlQueue.Dequeue();
                     // Stats {begin}
-                    MyAgent.averageCountOfFreeWorkers2.AddValue(CountFreeWorkers());
+                    if (freeWorker.certificate == CertificateType.AllVehicles)
+                    {
+                        MyAgent.averageCountOfFreeWorkers2AllVehicles.AddValue(CountFreeWorkersAllVehicles());
+                    }
+                    if (freeWorker.certificate == CertificateType.CarVan) 
+                    {
+                        MyAgent.averageCountOfFreeWorkers2CarVans.AddValue(CountFreeWorkersCarVan());
+                    }
+                    
                     // {end}
                     freeWorker.isBusy = true;
                     freeWorker.jobType = JobType.Controlling;
                     freeWorker.vehicle = ((MyMessage)message)._vehicle;
                     ((MyMessage)message)._worker = freeWorker;
-                    controllingVehicles.Add(((MyMessage)message)._vehicle.id, ((MyMessage)message)._vehicle);
+                    MyAgent.controllingVehicles.Add(((MyMessage)message)._vehicle.id, ((MyMessage)message)._vehicle);
                     message.Addressee = MyAgent.FindAssistant(SimId.VehicleControlProcess);
                     StartContinualAssistant(message);
                 }
             }
         }
 
-        private int CountFreeWorkers()
+        private int CountFreeWorkersAllVehicles()
         {
             int countFree = 0;
-            foreach (STKWorker data in workers2)
+            foreach (STKWorker data in MyAgent.workers2)
             {
-                if (!data.isBusy) countFree++;
+                if (!data.isBusy & data.certificate == CertificateType.AllVehicles) countFree++;
+            }
+            return countFree;
+        }
+
+        private int CountFreeWorkersCarVan()
+        {
+            int countFree = 0;
+            foreach (STKWorker data in MyAgent.workers2)
+            {
+                if (!data.isBusy & data.certificate == CertificateType.CarVan) countFree++;
             }
             return countFree;
         }
 
         private STKWorker? GetFreeWorker()
         {
-            foreach (STKWorker data in workers2)
+            foreach (STKWorker data in MyAgent.workers2)
             {
                 if (!data.isBusy)
                 {
@@ -114,9 +107,9 @@ namespace STK_AgentSimulation.managers
         }
         private STKWorker? GetFreeWorkerAdvanced()
         {
-            if (vehiclesParkingInFrontOfControlQueue.Peek()._vehicle.vehicleType == VehicleType.Truck)
+            if (MyAgent.vehiclesParkingInFrontOfControlQueue.Peek()._vehicle.vehicleType == VehicleType.Truck)
             {
-                foreach (STKWorker data in workers2)
+                foreach (STKWorker data in MyAgent.workers2)
                 {
                     if (!data.isBusy & data.certificate == CertificateType.AllVehicles)
                     {
@@ -127,9 +120,9 @@ namespace STK_AgentSimulation.managers
 
             } else
             {
-                foreach (STKWorker data in workers2)
+                foreach (STKWorker data in MyAgent.workers2)
                 {
-                    if (!data.isBusy & data.certificate == CertificateType.VanCar)
+                    if (!data.isBusy & data.certificate == CertificateType.CarVan)
                     {
                         return data;
                     }
@@ -146,7 +139,7 @@ namespace STK_AgentSimulation.managers
             Response(message);
 
             SetWorkerJobDone(((MyMessage)message));
-            controllingVehicles.Remove(((MyMessage)message)._vehicle.id);
+            MyAgent.controllingVehicles.Remove(((MyMessage)message)._vehicle.id);
             
 
             TryToScheduleBreak();
@@ -166,15 +159,15 @@ namespace STK_AgentSimulation.managers
         {
             message.Code = Mc.CheckSpace;
             message.Addressee = MySim.FindAgent(SimId.AgentSTK);
-            ((MyMessage)message).freeParkingSlots = Config.numberOfParkingSlots - vehiclesParkingInFrontOfControlQueue.Count;
+            ((MyMessage)message).freeParkingSlots = Config.numberOfParkingSlots - MyAgent.vehiclesParkingInFrontOfControlQueue.Count;
 
             int countBusy = 0;
-            foreach (STKWorker data in workers2)
+            foreach (STKWorker data in MyAgent.workers2)
             {
                 if (data.isBusy) countBusy++;
             }
 
-            ((MyMessage)message).freeWorkers2 = workers2.Count - countBusy;
+            ((MyMessage)message).freeWorkers2 = MyAgent.workers2.Count - countBusy;
             Response(message);
         }
 
@@ -188,24 +181,31 @@ namespace STK_AgentSimulation.managers
 		//meta! sender="AgentSTK", id="49", type="Notice"
 		public void ProcessWorkerBreak(MessageForm message)
 		{
-            breakTime = true;
+            MyAgent.breakTime = true;
             TryToScheduleBreak();
         }
         private void TryToScheduleBreak()
         {
-            if (breakTime & Config.advancedSimulation)
+            if (MyAgent.breakTime & Config.advancedSimulation)
             {
-                foreach (STKWorker data in workers2)
+                foreach (STKWorker worker in MyAgent.workers2)
                 {
-                    if (!data.isBusy & data.breakDoneAt == 0)
+                    if (!worker.isBusy & worker.breakDoneAt == 0)
                     {
                         // Stats {begin}
-                        MyAgent.averageCountOfFreeWorkers2.AddValue(CountFreeWorkers());
+                        if (worker.certificate == CertificateType.AllVehicles)
+                        {
+                            MyAgent.averageCountOfFreeWorkers2AllVehicles.AddValue(CountFreeWorkersAllVehicles());
+                        }
+                        if (worker.certificate == CertificateType.CarVan)
+                        {
+                            MyAgent.averageCountOfFreeWorkers2CarVans.AddValue(CountFreeWorkersCarVan());
+                        }
                         // {end}
-                        data.isBusy = true;
-                        data.jobType = JobType.Break;
+                        worker.isBusy = true;
+                        worker.jobType = JobType.Break;
                         MyMessage message = new MyMessage(MySim);
-                        message._worker = data;
+                        message._worker = worker;
                         message.Addressee = MyAgent.FindAssistant(SimId.Worker2BreakProcess);
                         StartContinualAssistant(message);
                     }
@@ -215,7 +215,14 @@ namespace STK_AgentSimulation.managers
         private void SetWorkerJobDone(MyMessage? message)
         {
             // Stats {begin}
-            MyAgent.averageCountOfFreeWorkers2.AddValue(CountFreeWorkers());
+            if (message._worker.certificate == CertificateType.AllVehicles)
+            {
+                MyAgent.averageCountOfFreeWorkers2AllVehicles.AddValue(CountFreeWorkersAllVehicles());
+            }
+            if (message._worker.certificate == CertificateType.CarVan)
+            {
+                MyAgent.averageCountOfFreeWorkers2CarVans.AddValue(CountFreeWorkersCarVan());
+            }
             // {end}
             message._worker.isBusy = false;
             message._worker.jobType = null;

@@ -17,7 +17,8 @@ namespace STK_AgentSimulation.simulation
         public NormalStatistic globalAverageTimeOfVehiclesInQueue { get; set; }
 
         public NormalStatistic globalAverageCountOfFreeWorkers1 { get; set; }
-        public NormalStatistic globalAverageCountOfFreeWorkers2 { get; set; }
+        public NormalStatistic globalAverageCountOfFreeWorkers2AllVehicles { get; set; }
+        public NormalStatistic globalAverageCountOfFreeWorkers2CarVans { get; set; }
         public MySimulation()
         {
             Init();
@@ -37,7 +38,8 @@ namespace STK_AgentSimulation.simulation
             globalAverageTimeOfVehiclesInQueue = new NormalStatistic(this);
 
             globalAverageCountOfFreeWorkers1 = new NormalStatistic(this);
-            globalAverageCountOfFreeWorkers2 = new NormalStatistic(this);
+            globalAverageCountOfFreeWorkers2AllVehicles = new NormalStatistic(this);
+            globalAverageCountOfFreeWorkers2CarVans = new NormalStatistic(this);
         }
 
         override protected void PrepareReplication()
@@ -60,7 +62,8 @@ namespace STK_AgentSimulation.simulation
             globalAverageTimeOfVehiclesInQueue.AddValue(AgentOffice.averageTimeOfVehiclesInQueue.GetResult());
 
             globalAverageCountOfFreeWorkers1.AddValue(AgentOffice.averageCountOfFreeWorkers1.GetResult());
-            globalAverageCountOfFreeWorkers2.AddValue(AgentGarage.averageCountOfFreeWorkers2.GetResult());
+            globalAverageCountOfFreeWorkers2AllVehicles.AddValue(AgentGarage.averageCountOfFreeWorkers2AllVehicles.GetResult());
+            globalAverageCountOfFreeWorkers2CarVans.AddValue(AgentGarage.averageCountOfFreeWorkers2CarVans.GetResult());
         }
 
         override protected void SimulationFinished()

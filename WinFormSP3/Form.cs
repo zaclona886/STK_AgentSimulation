@@ -63,18 +63,18 @@ namespace WinFormSP2
 
                 // Workers1
                 var countTrue = 0;
-                foreach (var item in ((ManagerOffice)_sim.AgentOffice.MyManager).workers1)
+                foreach (var item in _sim.AgentOffice.workers1)
                 {
                     if (item.isBusy)
                     {
                         countTrue++;
                     }
                 }
-                workers1Label.Text = new string("Workers1, Busy: " + countTrue + " / " + ((ManagerOffice)_sim.AgentOffice.MyManager).workers1.Count);
+                workers1Label.Text = new string("Workers1, Busy: " + countTrue + " / " + _sim.AgentOffice.workers1.Count);
 
                 workers1View.Items.Clear();
                 var i = 0;
-                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).workers1)
+                foreach (var data in _sim.AgentOffice.workers1)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data.jobType?.ToString());
@@ -85,18 +85,18 @@ namespace WinFormSP2
 
                 // Workers2 
                 countTrue = 0;
-                foreach (var item in ((ManagerGarage)_sim.AgentGarage.MyManager).workers2)
+                foreach (var item in _sim.AgentGarage.workers2)
                 {
                     if (item.isBusy)
                     {
                         countTrue++;
                     }
                 }
-                workers2Label.Text = new string("Workers2, Busy: " + countTrue + " / " + ((ManagerGarage)_sim.AgentGarage.MyManager).workers2.Count);
+                workers2Label.Text = new string("Workers2, Busy: " + countTrue + " / " + _sim.AgentGarage.workers2.Count);
 
                 workers2View.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerGarage)_sim.AgentGarage.MyManager).workers2)
+                foreach (var data in _sim.AgentGarage.workers2)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data.jobType?.ToString());
@@ -110,7 +110,7 @@ namespace WinFormSP2
                 // arived
                 arrivedVehiclesView.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).vehicleArrivalQueue)
+                foreach (var data in _sim.AgentOffice.vehicleArrivalQueue)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data._vehicle.id.ToString());
@@ -125,7 +125,7 @@ namespace WinFormSP2
                 // taken
                 takenVehiclesView.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).takenVehicles)
+                foreach (var data in _sim.AgentOffice.takenVehicles)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data.Value.id.ToString());
@@ -140,7 +140,7 @@ namespace WinFormSP2
                 // parking
                 parkingVehiclesView.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerGarage)_sim.AgentGarage.MyManager).vehiclesParkingInFrontOfControlQueue)
+                foreach (var data in _sim.AgentGarage.vehiclesParkingInFrontOfControlQueue)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data._vehicle.id.ToString());
@@ -155,7 +155,7 @@ namespace WinFormSP2
                 //controlled
                 controlledVehiclesView.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerGarage)_sim.AgentGarage.MyManager).controllingVehicles)
+                foreach (var data in _sim.AgentGarage.controllingVehicles)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data.Value.id.ToString());
@@ -170,7 +170,7 @@ namespace WinFormSP2
                 //payment queue
                 paymentQueueView.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).vehiclePaymentQueue)
+                foreach (var data in _sim.AgentOffice.vehiclePaymentQueue)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data._vehicle.id.ToString());
@@ -185,7 +185,7 @@ namespace WinFormSP2
                 //paying vehicles
                 payingView.Items.Clear();
                 i = 0;
-                foreach (var data in ((ManagerOffice)_sim.AgentOffice.MyManager).payingVehicles)
+                foreach (var data in _sim.AgentOffice.payingVehicles)
                 {
                     ListViewItem item = new ListViewItem((i + 1).ToString());
                     item.SubItems.Add(data.Value.id.ToString());
@@ -250,9 +250,15 @@ namespace WinFormSP2
                 itemLocStat.SubItems.Add("Worker1");
                 localStatView.Items.Add(itemLocStat);
 
-                //Average Count of Free Workers2
-                itemLocStat = new ListViewItem("Average Count of Free Workers2");
-                itemLocStat.SubItems.Add((_sim.AgentGarage.averageCountOfFreeWorkers2.GetResult()).ToString("F5"));
+                //Average Count of Free Workers2-AllVehicles
+                itemLocStat = new ListViewItem("Average Count of Free Workers2-AllVehicles");
+                itemLocStat.SubItems.Add((_sim.AgentGarage.averageCountOfFreeWorkers2AllVehicles.GetResult()).ToString("F5"));
+                itemLocStat.SubItems.Add("Worker2");
+                localStatView.Items.Add(itemLocStat);
+
+                //Average Count of Free Workers2-CarVans
+                itemLocStat = new ListViewItem("Average Count of Free Workers2-CarVans");
+                itemLocStat.SubItems.Add((_sim.AgentGarage.averageCountOfFreeWorkers2CarVans.GetResult()).ToString("F5"));
                 itemLocStat.SubItems.Add("Worker2");
                 localStatView.Items.Add(itemLocStat);
             }));
@@ -393,9 +399,15 @@ namespace WinFormSP2
                 itemLocStat.SubItems.Add("Worker1");
                 globalStatView.Items.Add(itemLocStat);
 
-                //Average Count of Free Workers2
-                itemLocStat = new ListViewItem("Average Count of Free Workers2");
-                itemLocStat.SubItems.Add((_sim.globalAverageCountOfFreeWorkers2.GetResult()).ToString("F5"));
+                //Average Count of Free Workers2-AllVehicles
+                itemLocStat = new ListViewItem("Average Count of Free Workers2-AllVehicles");
+                itemLocStat.SubItems.Add((_sim.globalAverageCountOfFreeWorkers2AllVehicles.GetResult()).ToString("F5"));
+                itemLocStat.SubItems.Add("Worker2");
+                globalStatView.Items.Add(itemLocStat);
+
+                //Average Count of Free Workers2-CarVans
+                itemLocStat = new ListViewItem("Average Count of Free Workers2-CarVans");
+                itemLocStat.SubItems.Add((_sim.globalAverageCountOfFreeWorkers2CarVans.GetResult()).ToString("F5"));
                 itemLocStat.SubItems.Add("Worker2");
                 globalStatView.Items.Add(itemLocStat);
 
