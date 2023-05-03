@@ -144,6 +144,7 @@
             label17 = new Label();
             startButtonCH2 = new Button();
             chartViewCH2 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
+            label21 = new Label();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox5.SuspendLayout();
@@ -437,6 +438,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(label21);
             tabPage1.Controls.Add(strongerCurrentOfVehiclesCheck);
             tabPage1.Controls.Add(strongerCurrentOfVehiclesLabel);
             tabPage1.Controls.Add(groupBox5);
@@ -472,7 +474,7 @@
             // strongerCurrentOfVehiclesCheck
             // 
             strongerCurrentOfVehiclesCheck.AutoSize = true;
-            strongerCurrentOfVehiclesCheck.Location = new Point(533, 49);
+            strongerCurrentOfVehiclesCheck.Location = new Point(533, 62);
             strongerCurrentOfVehiclesCheck.Name = "strongerCurrentOfVehiclesCheck";
             strongerCurrentOfVehiclesCheck.Size = new Size(15, 14);
             strongerCurrentOfVehiclesCheck.TabIndex = 51;
@@ -481,7 +483,7 @@
             // strongerCurrentOfVehiclesLabel
             // 
             strongerCurrentOfVehiclesLabel.AutoSize = true;
-            strongerCurrentOfVehiclesLabel.Location = new Point(346, 48);
+            strongerCurrentOfVehiclesLabel.Location = new Point(346, 61);
             strongerCurrentOfVehiclesLabel.Name = "strongerCurrentOfVehiclesLabel";
             strongerCurrentOfVehiclesLabel.Size = new Size(156, 15);
             strongerCurrentOfVehiclesLabel.TabIndex = 50;
@@ -565,7 +567,7 @@
             // advancedSimulationCheck
             // 
             advancedSimulationCheck.AutoSize = true;
-            advancedSimulationCheck.Location = new Point(533, 29);
+            advancedSimulationCheck.Location = new Point(533, 35);
             advancedSimulationCheck.Name = "advancedSimulationCheck";
             advancedSimulationCheck.Size = new Size(15, 14);
             advancedSimulationCheck.TabIndex = 46;
@@ -1118,6 +1120,15 @@
             chartViewCH2.Size = new Size(1455, 614);
             chartViewCH2.TabIndex = 45;
             // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Location = new Point(346, 43);
+            label21.Name = "label21";
+            label21.Size = new Size(160, 15);
+            label21.TabIndex = 52;
+            label21.Text = "(Workers Breaks, Certificates)";
+            // 
             // Form
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1269,5 +1280,6 @@
         private ColumnHeader columnHeader34;
         private CheckBox strongerCurrentOfVehiclesCheck;
         private Label strongerCurrentOfVehiclesLabel;
+        private Label label21;
     }
 }
