@@ -11,6 +11,7 @@ namespace STK_AgentSimulation.continualAssistants
     public class VehicleArriveScheduler : Scheduler
     {
         private BaseDistribution expoDistCarsArrival;
+        private BaseDistribution expoDistStrongerCarsArrival;
         private BaseDistribution vehicleTypeDist;
         private int vehicleIdCounter;
 
@@ -18,6 +19,8 @@ namespace STK_AgentSimulation.continualAssistants
             base(id, mySim, myAgent)
         {
             expoDistCarsArrival = new Exponential(STKDistributions.carArrivals);
+            expoDistStrongerCarsArrival = new Exponential(STKDistributions.strongerCarArrivals);
+
             vehicleTypeDist = new DiscreteEmpirical(STKDistributions.vehicleType);
             MyAgent.AddOwnMessage(Mc.NewVehicle);
         }
@@ -49,8 +52,14 @@ namespace STK_AgentSimulation.continualAssistants
             switch (message.Code)
             {
                 case Mc.NewVehicle:
-                    double time = expoDistCarsArrival.getNextValue();
-                    if (Config.strongerCurrentOfVehicles) time *= Config.strongerCurrentOfVehiclesOperator;
+                    double time = 0;
+                    if (Config.strongerCurrentOfVehicles)
+                    {
+                        time = expoDistStrongerCarsArrival.getNextValue();
+                    } else
+                    {
+                        time = expoDistCarsArrival.getNextValue();
+                    }
                     
                     if ((MySim.CurrentTime + time) < Config.stopOfArrivingVehicles) 
                     {

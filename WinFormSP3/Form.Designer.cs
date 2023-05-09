@@ -1,4 +1,4 @@
-﻿namespace WinFormSP2
+﻿namespace WinFormSP3
 {
     partial class Form
     {
@@ -70,6 +70,7 @@
             payingVehiclesLabel = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            label21 = new Label();
             strongerCurrentOfVehiclesCheck = new CheckBox();
             strongerCurrentOfVehiclesLabel = new Label();
             groupBox5 = new GroupBox();
@@ -118,33 +119,40 @@
             groupBox1 = new GroupBox();
             workers2View = new ListView();
             columnHeader26 = new ColumnHeader();
+            columnHeader42 = new ColumnHeader();
             columnHeader27 = new ColumnHeader();
             columnHeader28 = new ColumnHeader();
             columnHeader34 = new ColumnHeader();
             columnHeader35 = new ColumnHeader();
             workers1View = new ListView();
             columnHeader25 = new ColumnHeader();
+            columnHeader41 = new ColumnHeader();
             columnHeader29 = new ColumnHeader();
             columnHeader30 = new ColumnHeader();
             tabPage4 = new TabPage();
+            strongerCurrentCH1 = new CheckBox();
+            label23 = new Label();
+            workers2CarVanCH1 = new TextBox();
             statusLabelCH1 = new Label();
-            stopButtonCH1 = new Button();
-            worker2BoxCH1 = new TextBox();
             label15 = new Label();
-            repBoxCH1 = new TextBox();
+            stopButtonCH1 = new Button();
+            workers2AllCH1 = new TextBox();
+            replicationsCH1 = new TextBox();
+            label22 = new Label();
             label6 = new Label();
             startButtonCH1 = new Button();
             chartViewCH1 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
             tabPage3 = new TabPage();
+            strongerCurrentCH2 = new CheckBox();
+            label24 = new Label();
             statusLabelCH2 = new Label();
             stopButtonCH2 = new Button();
-            worker1BoxCH2 = new TextBox();
+            workers1CH2 = new TextBox();
             label16 = new Label();
-            repBoxCH2 = new TextBox();
+            replicationsCH2 = new TextBox();
             label17 = new Label();
             startButtonCH2 = new Button();
             chartViewCH2 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
-            label21 = new Label();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox5.SuspendLayout();
@@ -172,7 +180,7 @@
             // workers1Label
             // 
             workers1Label.AutoSize = true;
-            workers1Label.Location = new Point(9, 19);
+            workers1Label.Location = new Point(6, 20);
             workers1Label.Name = "workers1Label";
             workers1Label.Size = new Size(110, 15);
             workers1Label.TabIndex = 1;
@@ -181,7 +189,7 @@
             // workers2Label
             // 
             workers2Label.AutoSize = true;
-            workers2Label.Location = new Point(192, 19);
+            workers2Label.Location = new Point(269, 19);
             workers2Label.Name = "workers2Label";
             workers2Label.Size = new Size(110, 15);
             workers2Label.TabIndex = 2;
@@ -471,6 +479,15 @@
             tabPage1.Text = "Simulation";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Location = new Point(346, 43);
+            label21.Name = "label21";
+            label21.Size = new Size(160, 15);
+            label21.TabIndex = 52;
+            label21.Text = "(Workers Breaks, Certificates)";
+            // 
             // strongerCurrentOfVehiclesCheck
             // 
             strongerCurrentOfVehiclesCheck.AutoSize = true;
@@ -590,7 +607,7 @@
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(575, 255);
+            groupBox4.Size = new Size(412, 255);
             groupBox4.TabIndex = 44;
             groupBox4.TabStop = false;
             groupBox4.Text = "Global Statistics";
@@ -600,7 +617,7 @@
             globalStatView.Columns.AddRange(new ColumnHeader[] { columnHeader36, columnHeader37, columnHeader33, columnHeader38, columnHeader39, columnHeader40 });
             globalStatView.Location = new Point(6, 19);
             globalStatView.Name = "globalStatView";
-            globalStatView.Size = new Size(565, 227);
+            globalStatView.Size = new Size(400, 227);
             globalStatView.TabIndex = 31;
             globalStatView.UseCompatibleStateImageBehavior = false;
             globalStatView.View = View.Details;
@@ -637,7 +654,7 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(localStatView);
-            groupBox3.Location = new Point(587, 143);
+            groupBox3.Location = new Point(424, 143);
             groupBox3.Margin = new Padding(3, 2, 3, 2);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 2, 3, 2);
@@ -877,21 +894,21 @@
             // 
             groupBox1.Controls.Add(workers2View);
             groupBox1.Controls.Add(workers1View);
-            groupBox1.Controls.Add(workers1Label);
             groupBox1.Controls.Add(workers2Label);
-            groupBox1.Location = new Point(950, 142);
+            groupBox1.Controls.Add(workers1Label);
+            groupBox1.Location = new Point(787, 142);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(511, 255);
+            groupBox1.Size = new Size(674, 255);
             groupBox1.TabIndex = 30;
             groupBox1.TabStop = false;
             groupBox1.Text = "Workers Information";
             // 
             // workers2View
             // 
-            workers2View.Columns.AddRange(new ColumnHeader[] { columnHeader26, columnHeader27, columnHeader28, columnHeader34, columnHeader35 });
-            workers2View.Location = new Point(192, 37);
+            workers2View.Columns.AddRange(new ColumnHeader[] { columnHeader26, columnHeader42, columnHeader27, columnHeader28, columnHeader34, columnHeader35 });
+            workers2View.Location = new Point(269, 37);
             workers2View.Name = "workers2View";
-            workers2View.Size = new Size(313, 209);
+            workers2View.Size = new Size(400, 209);
             workers2View.TabIndex = 31;
             workers2View.UseCompatibleStateImageBehavior = false;
             workers2View.View = View.Details;
@@ -900,6 +917,11 @@
             // 
             columnHeader26.Text = "No.";
             columnHeader26.Width = 35;
+            // 
+            // columnHeader42
+            // 
+            columnHeader42.Text = "Break Done At";
+            columnHeader42.Width = 80;
             // 
             // columnHeader27
             // 
@@ -922,10 +944,10 @@
             // 
             // workers1View
             // 
-            workers1View.Columns.AddRange(new ColumnHeader[] { columnHeader25, columnHeader29, columnHeader30 });
-            workers1View.Location = new Point(6, 37);
+            workers1View.Columns.AddRange(new ColumnHeader[] { columnHeader25, columnHeader41, columnHeader29, columnHeader30 });
+            workers1View.Location = new Point(3, 38);
             workers1View.Name = "workers1View";
-            workers1View.Size = new Size(180, 209);
+            workers1View.Size = new Size(260, 209);
             workers1View.TabIndex = 30;
             workers1View.UseCompatibleStateImageBehavior = false;
             workers1View.View = View.Details;
@@ -934,6 +956,11 @@
             // 
             columnHeader25.Text = "No.";
             columnHeader25.Width = 35;
+            // 
+            // columnHeader41
+            // 
+            columnHeader41.Text = "Break Done At";
+            columnHeader41.Width = 80;
             // 
             // columnHeader29
             // 
@@ -946,11 +973,15 @@
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(strongerCurrentCH1);
+            tabPage4.Controls.Add(label23);
+            tabPage4.Controls.Add(workers2CarVanCH1);
             tabPage4.Controls.Add(statusLabelCH1);
-            tabPage4.Controls.Add(stopButtonCH1);
-            tabPage4.Controls.Add(worker2BoxCH1);
             tabPage4.Controls.Add(label15);
-            tabPage4.Controls.Add(repBoxCH1);
+            tabPage4.Controls.Add(stopButtonCH1);
+            tabPage4.Controls.Add(workers2AllCH1);
+            tabPage4.Controls.Add(replicationsCH1);
+            tabPage4.Controls.Add(label22);
             tabPage4.Controls.Add(label6);
             tabPage4.Controls.Add(startButtonCH1);
             tabPage4.Controls.Add(chartViewCH1);
@@ -962,14 +993,49 @@
             tabPage4.Text = "Chart1";
             tabPage4.UseVisualStyleBackColor = true;
             // 
+            // strongerCurrentCH1
+            // 
+            strongerCurrentCH1.AutoSize = true;
+            strongerCurrentCH1.Location = new Point(261, 39);
+            strongerCurrentCH1.Name = "strongerCurrentCH1";
+            strongerCurrentCH1.Size = new Size(15, 14);
+            strongerCurrentCH1.TabIndex = 54;
+            strongerCurrentCH1.UseVisualStyleBackColor = true;
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Location = new Point(99, 38);
+            label23.Name = "label23";
+            label23.Size = new Size(156, 15);
+            label23.TabIndex = 53;
+            label23.Text = "Stronger Current Of Vehicles";
+            // 
+            // workers2CarVanCH1
+            // 
+            workers2CarVanCH1.Location = new Point(588, 8);
+            workers2CarVanCH1.Name = "workers2CarVanCH1";
+            workers2CarVanCH1.Size = new Size(84, 23);
+            workers2CarVanCH1.TabIndex = 52;
+            workers2CarVanCH1.Text = "1";
+            // 
             // statusLabelCH1
             // 
             statusLabelCH1.AutoSize = true;
-            statusLabelCH1.Location = new Point(6, 59);
+            statusLabelCH1.Location = new Point(6, 60);
             statusLabelCH1.Name = "statusLabelCH1";
             statusLabelCH1.Size = new Size(42, 15);
             statusLabelCH1.TabIndex = 45;
             statusLabelCH1.Text = "Status:";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(483, 12);
+            label15.Name = "label15";
+            label15.Size = new Size(99, 15);
+            label15.TabIndex = 51;
+            label15.Text = "Workers2,CarVan:";
             // 
             // stopButtonCH1
             // 
@@ -981,30 +1047,30 @@
             stopButtonCH1.UseVisualStyleBackColor = true;
             stopButtonCH1.Click += stopButtonCH1_Click;
             // 
-            // worker2BoxCH1
+            // workers2AllCH1
             // 
-            worker2BoxCH1.Location = new Point(179, 35);
-            worker2BoxCH1.Name = "worker2BoxCH1";
-            worker2BoxCH1.Size = new Size(84, 23);
-            worker2BoxCH1.TabIndex = 43;
-            worker2BoxCH1.Text = "20";
+            workers2AllCH1.Location = new Point(393, 8);
+            workers2AllCH1.Name = "workers2AllCH1";
+            workers2AllCH1.Size = new Size(84, 23);
+            workers2AllCH1.TabIndex = 50;
+            workers2AllCH1.Text = "1";
             // 
-            // label15
+            // replicationsCH1
             // 
-            label15.AutoSize = true;
-            label15.Location = new Point(99, 39);
-            label15.Name = "label15";
-            label15.Size = new Size(59, 15);
-            label15.TabIndex = 42;
-            label15.Text = "Workers2:";
+            replicationsCH1.Location = new Point(179, 7);
+            replicationsCH1.Name = "replicationsCH1";
+            replicationsCH1.Size = new Size(84, 23);
+            replicationsCH1.TabIndex = 39;
+            replicationsCH1.Text = "500";
             // 
-            // repBoxCH1
+            // label22
             // 
-            repBoxCH1.Location = new Point(179, 6);
-            repBoxCH1.Name = "repBoxCH1";
-            repBoxCH1.Size = new Size(84, 23);
-            repBoxCH1.TabIndex = 39;
-            repBoxCH1.Text = "1000";
+            label22.AutoSize = true;
+            label22.Location = new Point(269, 11);
+            label22.Name = "label22";
+            label22.Size = new Size(118, 15);
+            label22.TabIndex = 49;
+            label22.Text = "Workers2,AllVehicles:";
             // 
             // label6
             // 
@@ -1027,18 +1093,20 @@
             // 
             // chartViewCH1
             // 
-            chartViewCH1.Location = new Point(6, 77);
+            chartViewCH1.Location = new Point(6, 78);
             chartViewCH1.Name = "chartViewCH1";
-            chartViewCH1.Size = new Size(1455, 614);
+            chartViewCH1.Size = new Size(1455, 613);
             chartViewCH1.TabIndex = 0;
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(strongerCurrentCH2);
+            tabPage3.Controls.Add(label24);
             tabPage3.Controls.Add(statusLabelCH2);
             tabPage3.Controls.Add(stopButtonCH2);
-            tabPage3.Controls.Add(worker1BoxCH2);
+            tabPage3.Controls.Add(workers1CH2);
             tabPage3.Controls.Add(label16);
-            tabPage3.Controls.Add(repBoxCH2);
+            tabPage3.Controls.Add(replicationsCH2);
             tabPage3.Controls.Add(label17);
             tabPage3.Controls.Add(startButtonCH2);
             tabPage3.Controls.Add(chartViewCH2);
@@ -1049,6 +1117,24 @@
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Chart2";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // strongerCurrentCH2
+            // 
+            strongerCurrentCH2.AutoSize = true;
+            strongerCurrentCH2.Location = new Point(261, 39);
+            strongerCurrentCH2.Name = "strongerCurrentCH2";
+            strongerCurrentCH2.Size = new Size(15, 14);
+            strongerCurrentCH2.TabIndex = 56;
+            strongerCurrentCH2.UseVisualStyleBackColor = true;
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Location = new Point(99, 38);
+            label24.Name = "label24";
+            label24.Size = new Size(156, 15);
+            label24.TabIndex = 55;
+            label24.Text = "Stronger Current Of Vehicles";
             // 
             // statusLabelCH2
             // 
@@ -1069,30 +1155,30 @@
             stopButtonCH2.UseVisualStyleBackColor = true;
             stopButtonCH2.Click += stopButtonCH2_Click;
             // 
-            // worker1BoxCH2
+            // workers1CH2
             // 
-            worker1BoxCH2.Location = new Point(179, 35);
-            worker1BoxCH2.Name = "worker1BoxCH2";
-            worker1BoxCH2.Size = new Size(84, 23);
-            worker1BoxCH2.TabIndex = 50;
-            worker1BoxCH2.Text = "20";
+            workers1CH2.Location = new Point(349, 5);
+            workers1CH2.Name = "workers1CH2";
+            workers1CH2.Size = new Size(84, 23);
+            workers1CH2.TabIndex = 50;
+            workers1CH2.Text = "20";
             // 
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(99, 39);
+            label16.Location = new Point(269, 9);
             label16.Name = "label16";
             label16.Size = new Size(59, 15);
             label16.TabIndex = 49;
             label16.Text = "Workers1:";
             // 
-            // repBoxCH2
+            // replicationsCH2
             // 
-            repBoxCH2.Location = new Point(179, 6);
-            repBoxCH2.Name = "repBoxCH2";
-            repBoxCH2.Size = new Size(84, 23);
-            repBoxCH2.TabIndex = 48;
-            repBoxCH2.Text = "1000";
+            replicationsCH2.Location = new Point(179, 6);
+            replicationsCH2.Name = "replicationsCH2";
+            replicationsCH2.Size = new Size(84, 23);
+            replicationsCH2.TabIndex = 48;
+            replicationsCH2.Text = "500";
             // 
             // label17
             // 
@@ -1119,15 +1205,6 @@
             chartViewCH2.Name = "chartViewCH2";
             chartViewCH2.Size = new Size(1455, 614);
             chartViewCH2.TabIndex = 45;
-            // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.Location = new Point(346, 43);
-            label21.Name = "label21";
-            label21.Size = new Size(160, 15);
-            label21.TabIndex = 52;
-            label21.Text = "(Workers Breaks, Certificates)";
             // 
             // Form
             // 
@@ -1248,17 +1325,11 @@
         private ColumnHeader columnHeader40;
         private ColumnHeader columnHeader33;
         private ColumnHeader Unit;
-        private Button stopButtonCH1;
-        private TextBox worker2BoxCH1;
-        private Label label15;
-        private TextBox repBoxCH1;
-        private Label label6;
-        private Button startButtonCH1;
         private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart chartViewCH1;
         private Button stopButtonCH2;
-        private TextBox worker1BoxCH2;
+        private TextBox workers1CH2;
         private Label label16;
-        private TextBox repBoxCH2;
+        private TextBox replicationsCH2;
         private Label label17;
         private Button startButtonCH2;
         private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart chartViewCH2;
@@ -1281,5 +1352,20 @@
         private CheckBox strongerCurrentOfVehiclesCheck;
         private Label strongerCurrentOfVehiclesLabel;
         private Label label21;
+        private Button stopButtonCH1;
+        private TextBox worker2BoxCH1;
+        private TextBox replicationsCH1;
+        private Label label6;
+        private Button startButtonCH1;
+        private ColumnHeader columnHeader42;
+        private ColumnHeader columnHeader41;
+        private TextBox workers2CarVanCH1;
+        private Label label15;
+        private TextBox workers2AllCH1;
+        private Label label22;
+        private CheckBox strongerCurrentCH1;
+        private Label label23;
+        private CheckBox strongerCurrentCH2;
+        private Label label24;
     }
 }

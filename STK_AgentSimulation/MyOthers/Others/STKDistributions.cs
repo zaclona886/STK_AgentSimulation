@@ -11,6 +11,7 @@ namespace STK_AgentSimulation.MyOthers.Others
     {
         //seconds
         public static double carArrivals = 3600.0 / 23.0;
+        public static double strongerCarArrivals = 3600.0 / (23.0 * 1.24);
         //seconds
         public static TriangularRange takingOverCar =
             new TriangularRange(

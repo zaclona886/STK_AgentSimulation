@@ -8,7 +8,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
-namespace WinFormSP1.Models
+namespace WinFormSP3.Models
 {
     public partial class ViewModel
     {

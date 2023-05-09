@@ -227,6 +227,14 @@ namespace STK_AgentSimulation.managers
         {
             ((MyMessage)message)._worker.breakDoneAt = MySim.CurrentTime;
             SetWorkerJobDone(((MyMessage)message));
+
+            if (MyAgent.vehicleArrivalQueue.Count > 0 || MyAgent.vehiclePaymentQueue.Count > 0)
+            {
+                MyMessage newMessage = (MyMessage)message.CreateCopy();
+                newMessage.Code = Mc.CheckSpace;
+                newMessage.Addressee = MySim.FindAgent(SimId.AgentSTK);
+                Request(newMessage);
+            }
         }
 
         //meta! sender="AgentSTK", id="48", type="Notice"

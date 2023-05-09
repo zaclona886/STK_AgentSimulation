@@ -11,7 +11,8 @@ namespace STK_AgentSimulation.agents
     public class AgentGarage : Agent
     {
         public Dictionary<int, STKVehicle> controllingVehicles { get; set; }
-        public Queue<MyMessage> vehiclesParkingInFrontOfControlQueue { get; set; }
+        public Queue<MyMessage> vehiclesParkingInFrontOfControlBASICQueue { get; set; }
+        public Queue<MyMessage> vehiclesParkingInFrontOfControlADVANCEDQueue { get; set; }
         public List<STKWorker> workers2 { get; set; }
         public bool breakTime { get; set; }
         public WeightStatistic averageCountOfFreeWorkers2AllVehicles { get; set; }
@@ -45,7 +46,8 @@ namespace STK_AgentSimulation.agents
                     workers2.Add(newWorker);
                 }
             }
-            vehiclesParkingInFrontOfControlQueue = new Queue<MyMessage>();
+            vehiclesParkingInFrontOfControlBASICQueue = new Queue<MyMessage>();
+            vehiclesParkingInFrontOfControlADVANCEDQueue = new Queue<MyMessage>();
             controllingVehicles = new Dictionary<int, STKVehicle>();
 
             breakTime = false;
